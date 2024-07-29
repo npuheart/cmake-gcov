@@ -44,5 +44,5 @@ jobs:
     - name: Upload PDF artifact
       uses: actions/upload-artifact@v2
       with:
-        name: ${{github.workspace}}/build
-        path: lcov
+        name: lcov
+        path: ${{github.workspace}}/build
