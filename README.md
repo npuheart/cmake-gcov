@@ -5,9 +5,7 @@ test the project. To perform an out-of-source build, run the following commands
 from the project root directory:
 
 ```
-mkdir build
-cd build
-cmake ..
+mkdir build && cd build && cmake .. && make gcov
 ```
 
 From the build directory you may build the project using `make`. The coverage
