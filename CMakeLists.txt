@@ -12,9 +12,12 @@ message("-- Object files will be output to: ${OBJECT_DIR}")
 
 # Set the sources
 set(SOURCES
-    RunAdder.cpp
-    Adder.cpp
+    src/RunAdder.cpp
+    src/Adder.cpp
     )
+
+add_library(${PROJECT_NAME}_dev OBJECT src/lib.cpp)
+target_include_directories(${PROJECT_NAME}_dev PUBLIC "./src/include")
 
 # Create the executable
 add_executable(RunAdder ${SOURCES})
@@ -46,8 +49,11 @@ add_custom_target(scrub
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     )
 
-# Testing
-enable_testing()
+option(ENABLE_TESTS "Build the test" ON)
 
-add_test(output_test ${CMAKE_CURRENT_BINARY_DIR}/RunAdder)
-set_tests_properties(output_test PROPERTIES PASS_REGULAR_EXPRESSION "0;5;10")
+# Enable testing
+if (ENABLE_TESTS)
+	# 启用测试
+    enable_testing()  
+    add_subdirectory(tests)  
+endif ()
