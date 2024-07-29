@@ -1,0 +1,1 @@
+/usr/bin/c++ -g -O0 -Wall -fprofile-arcs -ftest-coverage -g CMakeFiles/RunAdder.dir/RunAdder.o CMakeFiles/RunAdder.dir/Adder.o -o RunAdder

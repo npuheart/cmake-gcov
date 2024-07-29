@@ -1,0 +1,36 @@
+        -:    0:Source:/home/runner/work/cmake-gcov/cmake-gcov/RunAdder.cpp
+        -:    1:// RunAdder.cpp
+        -:    2:
+        -:    3:#include <iostream>
+        -:    4:
+        -:    5:#include "Adder.h"
+        -:    6:
+function main called 1 returned 100% blocks executed 100%
+        1:    7:int main() {
+        1:    8:    Adder adder;
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        1:    9:    adder.print_value(std::cout);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        1:   10:    adder.add(5);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        1:   11:    adder.print_value(std::cout);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        1:   12:    adder.add(5);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        1:   13:    adder.print_value(std::cout);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+        -:   14:
+        1:   15:    return 0;
+        -:   16:}

@@ -1,0 +1,6 @@
+/home/runner/work/cmake-gcov/cmake-gcov/build/CMakeFiles/RunAdder.dir
+/home/runner/work/cmake-gcov/cmake-gcov/build/CMakeFiles/gcov.dir
+/home/runner/work/cmake-gcov/cmake-gcov/build/CMakeFiles/scrub.dir
+/home/runner/work/cmake-gcov/cmake-gcov/build/CMakeFiles/test.dir
+/home/runner/work/cmake-gcov/cmake-gcov/build/CMakeFiles/edit_cache.dir
+/home/runner/work/cmake-gcov/cmake-gcov/build/CMakeFiles/rebuild_cache.dir

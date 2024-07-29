@@ -1,0 +1,22 @@
+Start testing: Jul 29 12:40 UTC
+----------------------------------------------------------
+1/1 Testing: output_test
+1/1 Test: output_test
+Command: "/home/runner/work/cmake-gcov/cmake-gcov/build/RunAdder"
+Directory: /home/runner/work/cmake-gcov/cmake-gcov/build
+"output_test" start time: Jul 29 12:40 UTC
+Output:
+----------------------------------------------------------
+Current value: 0
+Current value: 5
+Current value: 10
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Pass Reason:
+Required regular expression found. Regex=[0]
+"output_test" end time: Jul 29 12:40 UTC
+"output_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Jul 29 12:40 UTC
