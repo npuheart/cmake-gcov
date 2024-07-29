@@ -41,6 +41,16 @@ jobs:
         lcov --remove coverage.info '/usr/*' "${HOME}"'/.cache/*' '*tests/*' --output-file coverage.info
         genhtml coverage.info --output-directory result
 
+    - name: Commit & Push
+      uses: action-x/commit@v2.9
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        push-branch: 'output'
+        force-push: 'true'
+        commit-message: 'Generate lcov report'
+        name: github-actions[bot]
+        email: github-actions[bot]@noreply.github.com
+      
     - name: Upload PDF artifact
       uses: actions/upload-artifact@v2
       with:
