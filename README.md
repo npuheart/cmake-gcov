@@ -1,3 +1,15 @@
+## C++项目模板
+- src/main.cpp 为唯一主程序入口
+- src/Apple 等为独立的项目
+- src/xxx.cpp 保存临时的或公用的函数
+- tests 测试功能
+- tools 一些工具
+- data 数据，例如网格，生成的结果
+- .clang-format 项目文件
+- MIT 协议
+- 使用 catch2 测试
+- 使用 lcov 检测代码覆盖率
+
 # Using CMake with gcov
 
 After cloning this directory, an "out-of-source build" is recommended to
