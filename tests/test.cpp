@@ -11,11 +11,6 @@
 #include <Apple/lib.h>
 #include <Adder.h>
 #include <catch2/catch_test_macros.hpp> 
-// int main(){
-//     a();
-//     printf("Hello World\n");
-//     return 0;
-// }
 
 TEST_CASE("create zip", "[create_zip]")  
 {  

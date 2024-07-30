@@ -25,9 +25,19 @@ genhtml coverage.info --output-directory result
 # 编译所有可执行文件
 make 
 # 编译主程序
-make main
+make npuheart_main
+./npuheart_main
+```
+
+```bash
 # 运行测试程序
+cd build && cmake ..
+make npuheart_tests
 make test
+cd ..
+lcov --directory . --no-external --capture --output-file coverage.info
+lcov --remove coverage.info '*catch2-src*' --output-file coverage.info
+genhtml coverage.info --output-directory result
 ```
 
 ## Credits
