@@ -11,6 +11,6 @@ int main() {
     adder.print_value(std::cout);
     adder.add(5);
     adder.print_value(std::cout);
-
+    adder.clear();
     return 0;
 }

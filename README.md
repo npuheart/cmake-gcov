@@ -14,13 +14,21 @@ files will be output and stored in `build/coverage/TestHello.tmp`. Running
 `make clean` will remove the enitre coverage directory.
 
 ## lcov
-
 ``` bash
-lcov --directory . --capture --output-file coverage.info
-lcov --remove coverage.info '/usr/*' "${HOME}"'/.cache/*' '*tests/*' --output-file coverage.info
+lcov --directory . --no-external --capture --output-file coverage.info
+lcov --remove coverage.info '*catch2-src*' --output-file coverage.info
 genhtml coverage.info --output-directory result
 ```
+## 编译主程序
 
+```bash
+# 编译所有可执行文件
+make 
+# 编译主程序
+make main
+# 运行测试程序
+make test
+```
 
 ## Credits
 - From the [Blog](https://github.com/jhbell/cmake-gcov) of Jeffrey H. Bell and his [GitHub Repository](https://jhbell.com/using-cmake-and-gcov).

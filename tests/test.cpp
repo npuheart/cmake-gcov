@@ -8,9 +8,28 @@
 /// 
 ///
 #include <iostream>
-#include <lib.h>
-int main(){
-    a();
-    printf("Hello World\n");
-    return 0;
+#include <Apple/lib.h>
+#include <Adder.h>
+#include <catch2/catch_test_macros.hpp> 
+// int main(){
+//     a();
+//     printf("Hello World\n");
+//     return 0;
+// }
+
+TEST_CASE("create zip", "[create_zip]")  
+{  
+    Adder adder;
+    adder.print_value(std::cout);
+    adder.add(5);
+    adder.print_value(std::cout);
+    adder.add(5);
+    adder.print_value(std::cout);
+    adder.clear();
+    REQUIRE(a(0,1) == 1); 
+}
+
+TEST_CASE("create zip2", "[create_zip]")  
+{  
+    REQUIRE(a(1,0) == 1); 
 }
