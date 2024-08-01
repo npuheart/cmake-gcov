@@ -16,6 +16,7 @@ set(CMAKE_CXX_EXTENSIONS ON)
 if (ENABLE_COVERAGE)
     set(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage") # 
 endif ()
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
 # print messages of settings
 message(STATUS ENABLE_COVERAGE=${ENABLE_COVERAGE})

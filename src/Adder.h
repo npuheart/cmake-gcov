@@ -11,6 +11,8 @@
 #pragma once
 
 #include <iostream>
+#include <cstdint>
+#include <Partio.h>
 
 class Adder
 {
