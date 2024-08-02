@@ -25,7 +25,7 @@ public:
 
     static std::string& defaultDataDir()
     {
-        static std::string default_data_dir = "@ZIRAN_DATA_DIR@";
+        static std::string default_data_dir = "@PROJECT_NAME@_DATA_DIR";
         return default_data_dir;
     }
 

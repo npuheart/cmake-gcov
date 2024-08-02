@@ -2,6 +2,7 @@
 *.swp
 *.swo
 build
+data/logs
 result
 Testing
 coverage.info

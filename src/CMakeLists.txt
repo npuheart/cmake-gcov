@@ -21,6 +21,9 @@ target_link_libraries(${PROJECT_NAME}_dev PUBLIC eigen)
 
 
 
-set(ZIRAN_DATA_DIR ${ZIRAN_SOURCE_DIR}/data)
+set(${PROJECT_NAME}_DATA_DIR ${CMAKE_SOURCE_DIR}/data)
+message(STATUS "${PROJECT_NAME}_DATA_DIR: ${${PROJECT_NAME}_DATA_DIR}")
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CS/Util/DataDir.h.in ${CMAKE_CURRENT_SOURCE_DIR}/CS/Util/DataDir.h @ONLY)
 
+# 添加编译参数
+# target_compile_definitions(${PROJECT_NAME}_dev PUBLIC USE_CUDA_COMPILER)
