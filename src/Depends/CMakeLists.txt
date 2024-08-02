@@ -101,6 +101,21 @@ download_project(
 add_library(Tick INTERFACE)
 target_include_directories(Tick SYSTEM INTERFACE ${Tick_SOURCE_DIR})
 
+download_project(
+  PROJ pugixml
+  GIT_REPOSITORY https://github.com/zeux/pugixml
+  GIT_TAG 30cc354fe37114ec7a0a4ed2192951690357c2ed
+  UPDATE_DISCONNECTED 1
+  )
+
+# 30cc354fe37114ec7a0a4ed2192951690357c2ed
+# pugixml.hpp
+# message(STATUS "pugixml_SOURCE_DIR: ${pugixml_SOURCE_DIR}")
+# add_library(pugixml INTERFACE)
+# target_include_directories(pugixml SYSTEM INTERFACE ${pugixml_SOURCE_DIR}/src)
+add_subdirectory(${pugixml_SOURCE_DIR} ${pugixml_BINARY_DIR})
+
+
 find_package(Metis)
 if(METIS_FOUND)
   add_library(metis SHARED IMPORTED GLOBAL)
