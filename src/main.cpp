@@ -8,48 +8,58 @@
 ///
 ///
 
-#include <spdlog/sinks/basic_file_sink.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
+// #include <spdlog/sinks/basic_file_sink.h>
+// #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
-#include <CS/Util/DataDir.h>
-#include <MnBase/Math/Vec.h>
-#include <MnBase/Object/StructuralAuxiliary.h>
+// #include <CS/Util/DataDir.h>
+// #include <MnBase/Math/Vec.h>
+// #include <MnBase/Object/StructuralAuxiliary.h>
+
+// #include <mpi.h>
 
 
 
-using namespace mn;
-int main() {
-    ZIRAN::DataDir output_dir{};
-    std::string obj_filename = output_dir.absolutePath(ZIRAN::outputFileName("logs/basic-log", ".txt"));
+// Author: Wes Kendall
+// Copyright 2011 www.mpitutorial.com
+// This code is provided freely with the tutorials on mpitutorial.com. Feel
+// free to modify it for your own use. Any distribution of the code must
+// either provide a link to www.mpitutorial.com or keep this header intact.
+//
+// Example using MPI_Send and MPI_Recv to pass a message around in a ring.
+//
+#include <mpi.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-    auto logger = spdlog::basic_logger_mt("basic_logger", obj_filename);
+int main(int argc, char** argv) {
+    // Initialize the MPI environment
+    MPI_Init(NULL, NULL);
+    // Find out rank, size
+    int world_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+    int world_size;
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
-    CompactDomain<uint32_t, 3, 4, 5, 6> cd;
-    CompactDomain<uint32_t, 3, 4, 5, 6>::index cd_vec;
-    using extends = CompactDomain<uint32_t, 3, 4, 5, 6>::base_t::extends;
-    using extends_1 = CompactDomain<uint32_t, 3, 4, 5, 7, 8, 9>::base_t::extends;
+    int token;
+    // Receive from the lower process and send to the higher process. Take care
+    // of the special case when you are the first process to prevent deadlock.
+    if (world_rank != 0) {
+        MPI_Recv(&token, 1, MPI_INT, world_rank - 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        spdlog::info("Process {0} received token {1} from process {2}", world_rank, token, world_rank - 1);
+    } else {
+        // Set the token's value if you are process 0
+        token = -1;
+    }
+    token++;
 
-    vec_impl<double, std::integer_sequence<uint32_t, 3, 4, 5, 6>> v1;
-    vec_impl<double, extends> v2;
-    vec_impl<double, extends_1> v3;
-
-    spdlog::info("Extent of v3  : {}", v3.extent);
-
-    spdlog::info("CompactDomain dim : {}", cd.dim);
-    spdlog::info("CompactDomain extent : {}", cd.extent);
-
-    spdlog::info("CompactDomain range : {}", cd.range(placeholder::_1));
-    spdlog::info("CompactDomain range : {}", cd.range(placeholder::_0));
-
-    spdlog::info("CompactDomain offset : {}", cd.offset(1));
-    spdlog::info("CompactDomain offset : {}", cd.offset(1, 0, 0, 0));
-    spdlog::info("CompactDomain offset : {}", cd.offset(1, 2));
-    spdlog::info("CompactDomain offset : {}", cd.offset(0, 0, 0, 0));
-    spdlog::info("CompactDomain offset : {}", cd.offset(0, 0, 0, 1));
-    spdlog::info("CompactDomain offset : {}", cd.offset(0, 0, 1, 1));
-    spdlog::info("CompactDomain offset : {}", cd.offset(0, 1, 1, 1));
-    spdlog::info("CompactDomain offset : {}", cd.offset(1, 1, 1, 1));
-
-    return 0;
+    MPI_Send(&token, 1, MPI_INT, (world_rank + 1) % world_size, 0, MPI_COMM_WORLD);
+    // Now process 0 can receive from the last process. This makes sure that at
+    // least one MPI_Send is initialized before all MPI_Recvs (again, to prevent
+    // deadlock)
+    if (world_rank == 0) {
+        MPI_Recv(&token, 1, MPI_INT, world_size - 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        spdlog::info("Process {0} received token {1} from process {2}", world_rank, token, world_size - 1);
+    }
+    MPI_Finalize();
 }

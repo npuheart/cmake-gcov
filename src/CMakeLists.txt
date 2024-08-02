@@ -19,6 +19,9 @@ add_library(eigen INTERFACE IMPORTED)
 target_include_directories(${PROJECT_NAME}_dev SYSTEM PUBLIC ${EIGEN3_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME}_dev PUBLIC eigen)
 
+find_package(MPI REQUIRED)
+# target_include_directories(${PROJECT_NAME}_dev PUBLIC ${MPI_INCLUDE_PATH})
+target_link_libraries(${PROJECT_NAME}_dev PUBLIC ${MPI_CXX_LIBRARIES})
 
 
 set(${PROJECT_NAME}_DATA_DIR ${CMAKE_SOURCE_DIR}/data)
