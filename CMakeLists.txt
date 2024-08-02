@@ -1,15 +1,15 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.27)
 
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
 # Set the cmake options
-option(ENABLE_TESTS "Build the tests" ON)
-option(ENABLE_COVERAGE "Generate coverage reports" ON)
+option(ENABLE_TESTS "Build the tests" OFF)
+option(ENABLE_COVERAGE "Generate coverage reports" OFF)
 
 # Set the compiler options
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 # set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake;${CMAKE_MODULE_PATH}")

@@ -22,7 +22,7 @@ find_path(HALF_INCLUDE_DIRS
 )
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(HALF DEFAULT_MSG
+find_package_handle_standard_args(Half DEFAULT_MSG
     HALF_LIBRARIES
     HALF_INCLUDE_DIRS
 )

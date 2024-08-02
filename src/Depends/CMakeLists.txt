@@ -116,7 +116,7 @@ download_project(
 add_subdirectory(${pugixml_SOURCE_DIR} ${pugixml_BINARY_DIR})
 
 
-find_package(Metis)
+find_package(Metis REQUIRED)
 if(METIS_FOUND)
   add_library(metis SHARED IMPORTED GLOBAL)
   if(METIS_INCLUDE_DIRS)

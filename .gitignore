@@ -7,3 +7,6 @@ Testing
 coverage.info
 
 src/TMP
+
+*.vtk
+.vscode
