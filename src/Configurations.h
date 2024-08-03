@@ -21,6 +21,8 @@ class Parameter {
 public:
   using _valuetype =
       std::variant<bool, int, double, std::string, std::shared_ptr<Parameter>>;
+  using _functype = std::function<void(const std::string &, const _valuetype &,
+                                       const std::string &)>;
 
 public:
   auto value(const std::string &key) { return _map[key]; }
@@ -30,26 +32,13 @@ public:
     return _map[key];
   }
 
-  void print(const std::string ident = "    ") {
+  void for_each(const _functype &func, const std::string &tag) const {
     for (const auto &[key, value] : _map) {
-      if(auto p = std::get_if<std::shared_ptr<Parameter>>(&value)) {
-        std::cout << ident << "Key: " << key << std::endl;
-        (*p)->print(ident+"    ");
-      }
-
-      // if (std::holds_alternative<std::shared_ptr<Parameter>>(value)) {
-      //   std::cout << ident << "Key: " << key << std::endl;
-      //   auto tmp = std::get<std::shared_ptr<Parameter>>(value);
-      //   tmp->print(ident+"    ");
-
-      // } 
-      else {
-
-        std::visit(
-            [&key, &ident](auto &&arg) {
-              std::cout << ident << "Key: " << key << ", Value: " << arg << std::endl;
-            },
-            value);
+      if (auto p = std::get_if<std::shared_ptr<Parameter>>(&value)) {
+        func(key, value, tag);
+        (*p)->for_each(func, tag + "    ");
+      } else {
+        func(key, value, tag);
       }
     }
   }
@@ -61,6 +50,42 @@ public:
 namespace mn {
 struct ParameterRoot : ManagedSingleton<ParameterRoot>, Parameter {};
 } // namespace mn
+
+void initial_parameters() {
+
+  auto param_root = mn::ParameterRoot::instance();
+  auto param_linear_solver = std::make_shared<Parameter>();
+  auto param_newton_solver = std::make_shared<Parameter>();
+  auto param_line_search = std::make_shared<Parameter>();
+
+  param_linear_solver->set_value("tolerance", 0.001);
+  param_newton_solver->set_value("black", true);
+  param_newton_solver->set_value("black", 1);
+  param_newton_solver->set_value("line_search", param_line_search);
+  param_line_search->set_value("step", 0.3);
+
+  param_root.set_value("linear_solver", param_linear_solver);
+  param_root.set_value("newton_solver", param_newton_solver);
+  param_root.set_value("haha", 0.2);
+
+  auto func = [](const std::string &key, const Parameter::_valuetype &value,
+                 const std::string &tag) {
+    if (auto p = std::get_if<std::shared_ptr<Parameter>>(&value)) {
+      spdlog::info("{}{} :", tag, key);
+    } else if (auto p = std::get_if<bool>(&value)) {
+      spdlog::info("{}{}: {}", tag, key, *p);
+    } else if (auto p = std::get_if<int>(&value)) {
+      spdlog::info("{}{}: {}", tag, key, *p);
+    } else if (auto p = std::get_if<double>(&value)) {
+      spdlog::info("{}{}: {}", tag, key, *p);
+    } else if (auto p = std::get_if<std::string>(&value)) {
+      spdlog::info("{}{}: {}", tag, key, *p);
+    } else {
+      spdlog::error("Parameter type not supported");
+    }
+  };
+  param_root.for_each(func, "");
+}
 
 auto parse_arguments(int argc, char *argv[]) {
 
@@ -77,6 +102,7 @@ auto parse_arguments(int argc, char *argv[]) {
     std::cout << options.help() << std::endl;
     exit(0);
   }
+  
   auto fn = result["file"].as<std::string>();
   spdlog::info("loading scene [{}]\n", fn);
 }

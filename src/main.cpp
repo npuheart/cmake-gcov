@@ -24,13 +24,6 @@ int main(int argc, char* argv[]) {
     // LOG_ERROR("2");
     parse_arguments(argc, argv);
 
-    auto param_root = mn::ParameterRoot::instance();
-    auto param_linear_solver = std::make_shared<Parameter>();
-    param_linear_solver->set_value("tolerance", 0.001);
-    param_root.set_value("linear_solver", param_linear_solver);
-    param_root.set_value("haha", 0.2);
-
-    param_root.print();
     
     // template <typename T> auto 
     //      set_value(const string &key, const T &value) {
@@ -136,9 +129,9 @@ int main(int argc, char* argv[]) {
 
 //     void speak(std::string lang, bool newline) const {
 //         if (lang == "cn") {
-//             std::cout << "你好！我是" << name << "，今年" << age << "岁，是" << (sex == 1 ? "男" : "女") << "生。";
+//             std::cout << "你好！我是" << name << "，今年" << age << "岁，是" << (sex == 1 ? "男": "女") << "生。";
 //         } else {
-//             std::cout << "Hello! I am " << name << ", " << age << " years old, a " << (sex == 1 ? "boy" : "girl") << ".";
+//             std::cout << "Hello! I am " << name << ", " << age << " years old, a " << (sex == 1 ? "boy": "girl") << ".";
 //         }
 //         if (newline) {
 //             std::cout << '\n';
