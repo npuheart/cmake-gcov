@@ -33,7 +33,7 @@ project(npuheart CXX CUDA)
 add_subdirectory(src)  
 
 # Create the executable (唯一的主程序)
-add_executable(${PROJECT_NAME}_main src/main.cu)
+add_executable(${PROJECT_NAME}_main src/main.cu src/main.cpp)
 target_link_libraries(${PROJECT_NAME}_main ${PROJECT_NAME}_dev)
 
 # Enable testing

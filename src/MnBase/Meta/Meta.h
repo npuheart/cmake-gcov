@@ -4,10 +4,10 @@
 #include <initializer_list>
 #include <type_traits>
 
-#ifndef USE_CUDA_COMPILER
-#define __host__ 
-#define __device__
-#endif
+// #ifndef USE_CUDA_COMPILER
+// #define __host__ 
+// #define __device__
+// #endif
 
 namespace mn {
 
