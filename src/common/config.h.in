@@ -1,0 +1,17 @@
+/// @date 2024-08-03
+/// @file config.h.in
+/// @author Ma Pengfei (code@pengfeima.cn)
+/// @version 0.1
+/// @copyright Copyright (c) 2024 Ma Pengfei
+/// 
+/// @brief 
+/// 
+///
+
+#pragma once
+#define CMAKE_SOURCE_DIR   "@CMAKE_SOURCE_DIR@"
+#define CMAKE_DATA_DIR     "@CMAKE_SOURCE_DIR@/data"
+#define CMAKE_LOG_DIR      CMAKE_DATA_DIR"/log/info.log"
+
+#define CONSOLE_LOG true
+

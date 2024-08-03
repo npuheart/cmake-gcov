@@ -24,10 +24,13 @@ find_package(MPI REQUIRED)
 target_include_directories(${PROJECT_NAME}_dev PUBLIC ${MPI_INCLUDE_PATH})
 target_link_libraries(${PROJECT_NAME}_dev PUBLIC ${MPI_CXX_LIBRARIES})
 
+find_package(nlohmann_json REQUIRED)
+target_link_libraries(${PROJECT_NAME}_dev PUBLIC  nlohmann_json::nlohmann_json)
 
 set(${PROJECT_NAME}_DATA_DIR ${CMAKE_SOURCE_DIR}/data)
 message(STATUS "${PROJECT_NAME}_DATA_DIR: ${${PROJECT_NAME}_DATA_DIR}")
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/common/DataDir.h.in ${CMAKE_CURRENT_SOURCE_DIR}/common/DataDir.h)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/common/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/common/config.h)
+
 
 # 添加编译参数
 target_compile_definitions(${PROJECT_NAME}_dev PUBLIC USE_CUDA_COMPILER)

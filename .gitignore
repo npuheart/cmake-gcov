@@ -10,4 +10,5 @@ coverage.info
 src/TMP
 
 *.vtk
+*.json
 .vscode

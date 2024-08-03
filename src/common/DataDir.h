@@ -6,6 +6,7 @@
 #include <spdlog/spdlog.h>
 // #include <Ziran/CS/Util/Logging.h>
 #include "FileSystem.h"
+#include "config.h"
 
 namespace ZIRAN {
 /**
@@ -25,7 +26,7 @@ public:
 
     static std::string& defaultDataDir()
     {
-        static std::string default_data_dir = "@npuheart_DATA_DIR@";
+        static std::string default_data_dir = CMAKE_DATA_DIR;
         return default_data_dir;
     }
 
