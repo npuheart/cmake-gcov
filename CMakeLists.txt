@@ -13,6 +13,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 # set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake;${CMAKE_MODULE_PATH}")
+set(CMAKE_CUDA_ARCHITECTURES 89)
+
 if (ENABLE_COVERAGE)
     set(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage") # 
 endif ()
@@ -25,13 +27,13 @@ message(STATUS ENABLE_TESTS=${ENABLE_TESTS})
 #####################################################################
 ################# Set the project (项目开始) #########################
 #####################################################################
-project(npuheart CXX)
+project(npuheart CXX CUDA)
 
 # 主要源码
 add_subdirectory(src)  
 
 # Create the executable (唯一的主程序)
-add_executable(${PROJECT_NAME}_main src/main.cpp)
+add_executable(${PROJECT_NAME}_main src/main.cu)
 target_link_libraries(${PROJECT_NAME}_main ${PROJECT_NAME}_dev)
 
 # Enable testing
