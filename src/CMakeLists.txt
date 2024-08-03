@@ -2,7 +2,7 @@
 # 添加子项目
 add_subdirectory(Apple)
 add_subdirectory(Depends)
-add_subdirectory(MnSystem)
+add_subdirectory(Mn)
 
 # Create the library (创建库)
 add_library(${PROJECT_NAME}_dev OBJECT Adder.cpp)
@@ -27,7 +27,7 @@ target_link_libraries(${PROJECT_NAME}_dev PUBLIC ${MPI_CXX_LIBRARIES})
 
 set(${PROJECT_NAME}_DATA_DIR ${CMAKE_SOURCE_DIR}/data)
 message(STATUS "${PROJECT_NAME}_DATA_DIR: ${${PROJECT_NAME}_DATA_DIR}")
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CS/Util/DataDir.h.in ${CMAKE_CURRENT_SOURCE_DIR}/CS/Util/DataDir.h @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/common/DataDir.h.in ${CMAKE_CURRENT_SOURCE_DIR}/common/DataDir.h)
 
 # 添加编译参数
 target_compile_definitions(${PROJECT_NAME}_dev PUBLIC USE_CUDA_COMPILER)
