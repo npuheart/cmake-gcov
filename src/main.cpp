@@ -8,36 +8,32 @@
 ///
 ///
 #include <Configurations.h>
-#include <common/json.h>
-#include <common/log.h>
-#include <cxxopts.hpp>
 
-// auto parse_arguments(int argc, char* argv[]);
 
 // 一个类，包含
 //             cxxopts::Options options
 //             nlohmann::json json
 
 int main(int argc, char* argv[]) {
+    mn::ParameterRoot::startup();
 
     init_logging(argc, argv);
 
     LOG_INFO("1");
     LOG_WARN("2");
     // LOG_ERROR("2");
+    parse_arguments(argc, argv);
 
-	cxxopts::Options options("Scene_Loader", "Read simulation scene");
-	options.add_options()("f,file",  "Scene Configuration File", cxxopts::value<std::string>()->default_value("scenes/scene.json"));
-	options.add_options()("g,gile",  "Generate Something",       cxxopts::value<int>()->default_value("0"));
-    options.add_options()("h,help",  "Show Help");
+    auto param_root = mn::ParameterRoot::instance();
+    auto param_linear_solver = std::make_shared<Parameter>();
+    param_linear_solver->set_value("tolerance", 0.001);
+    param_root.set_value("linear_solver", param_linear_solver);
+    param_root.set_value("haha", 0.2);
 
-    auto result = options.parse(argc, argv);
-    if (result.count("help")) {
-        std::cout << options.help() << std::endl;
-        exit(0);
-    }
-	auto fn		 = result["file"].as<std::string>();
-	spdlog::info("loading scene [{}]\n", fn);
+    param_root.print();
+    
+    // template <typename T> auto 
+    //      set_value(const string &key, const T &value) {
 
     // param::json  = std::make_shared<JsonFile>(config_file);
 
