@@ -43,15 +43,14 @@ public:
       if constexpr (std::is_same_v<T, std::string>) {
         if (jsonData[key].is_string()) {
           return jsonData[key].get<std::string>();
-        } else { /* CHECK_F(false, "键存在但值不是字符串：%s", key.c_str());*/
+        } else { 
+          LOG_ERROR("键：{} 存在, 但值不是字符串", key.c_str());
         }
       }
-      {
-        // CHECK_F(false, "仅支持 double 和 std::string 类型");
-      }
+      LOG_ERROR("仅支持 double 和 std::string 类型");
     }
     {
-      // CHECK_F(false, "键不存在：%s", key.c_str());
+      LOG_ERROR("键不存在：{}", key.c_str());
     }
     return T{}; // 函数不会运行到这里，以下语句只为注明返回类型。
   }

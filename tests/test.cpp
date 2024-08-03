@@ -7,42 +7,39 @@
 /// @brief
 ///
 ///
-#include <iostream>
-#include <Apple/lib.h>
-#include <Adder.h>
 #include "test.h"
+#include <Adder.h>
+#include <Apple/lib.h>
 #include <catch2/catch_test_macros.hpp>
+#include <iostream>
 
-TEST_CASE("create zip", "[create_zip]")
-{
-    Adder adder;
-    adder.print_value(std::cout);
-    adder.add(5);
-    adder.print_value(std::cout);
-    adder.add(5);
-    adder.print_value(std::cout);
-    adder.clear();
-    REQUIRE(a(0, 1) == 1);
+TEST_CASE("create zip", "[create_zip]") {
+  Adder adder;
+  adder.print_value(std::cout);
+  adder.add(5);
+  adder.print_value(std::cout);
+  adder.add(5);
+  adder.print_value(std::cout);
+  adder.clear();
+  REQUIRE(a(0, 1) == 1);
 }
 
-TEST_CASE("cuda minial function", "[cuda_common_1]")
-{
-    main_cuda();
-}
-
+TEST_CASE("cuda minial function", "[cuda_common_1]") { main_cuda(); }
 
 // 测试模板数组
 // using namespace mn;
 // int main() {
 //     ZIRAN::DataDir output_dir{};
-//     std::string obj_filename = output_dir.absolutePath(ZIRAN::outputFileName("logs/basic-log", ".txt"));
+//     std::string obj_filename =
+//     output_dir.absolutePath(ZIRAN::outputFileName("logs/basic-log", ".txt"));
 
 //     auto logger = spdlog::basic_logger_mt("basic_logger", obj_filename);
 
 //     CompactDomain<uint32_t, 3, 4, 5, 6> cd;
 //     CompactDomain<uint32_t, 3, 4, 5, 6>::index cd_vec;
 //     using extends = CompactDomain<uint32_t, 3, 4, 5, 6>::base_t::extends;
-//     using extends_1 = CompactDomain<uint32_t, 3, 4, 5, 7, 8, 9>::base_t::extends;
+//     using extends_1 = CompactDomain<uint32_t, 3, 4, 5, 7, 8,
+//     9>::base_t::extends;
 
 //     vec_impl<double, std::integer_sequence<uint32_t, 3, 4, 5, 6>> v1;
 //     vec_impl<double, extends> v2;
@@ -68,7 +65,6 @@ TEST_CASE("cuda minial function", "[cuda_common_1]")
 //     return 0;
 // }
 
-
 // Author: Wes Kendall
 // Copyright 2011 www.mpitutorial.com
 // This code is provided freely with the tutorials on mpitutorial.com. Feel
@@ -92,39 +88,46 @@ TEST_CASE("cuda minial function", "[cuda_common_1]")
 //     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
 //     int token;
-//     // Receive from the lower process and send to the higher process. Take care
-//     // of the special case when you are the first process to prevent deadlock.
-//     if (world_rank != 0) {
-//         MPI_Recv(&token, 1, MPI_INT, world_rank - 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-//         spdlog::info("Process {0} received token {1} from process {2}", world_rank, token, world_rank - 1);
+//     // Receive from the lower process and send to the higher process. Take
+//     care
+//     // of the special case when you are the first process to prevent
+//     deadlock. if (world_rank != 0) {
+//         MPI_Recv(&token, 1, MPI_INT, world_rank - 1, 0, MPI_COMM_WORLD,
+//         MPI_STATUS_IGNORE); spdlog::info("Process {0} received token {1} from
+//         process {2}", world_rank, token, world_rank - 1);
 //     } else {
 //         // Set the token's value if you are process 0
 //         token = -1;
 //     }
 //     token++;
 
-//     MPI_Send(&token, 1, MPI_INT, (world_rank + 1) % world_size, 0, MPI_COMM_WORLD);
-//     // Now process 0 can receive from the last process. This makes sure that at
-//     // least one MPI_Send is initialized before all MPI_Recvs (again, to prevent
+//     MPI_Send(&token, 1, MPI_INT, (world_rank + 1) % world_size, 0,
+//     MPI_COMM_WORLD);
+//     // Now process 0 can receive from the last process. This makes sure that
+//     at
+//     // least one MPI_Send is initialized before all MPI_Recvs (again, to
+//     prevent
 //     // deadlock)
 //     if (world_rank == 0) {
-//         MPI_Recv(&token, 1, MPI_INT, world_size - 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-//         spdlog::info("Process {0} received token {1} from process {2}", world_rank, token, world_size - 1);
+//         MPI_Recv(&token, 1, MPI_INT, world_size - 1, 0, MPI_COMM_WORLD,
+//         MPI_STATUS_IGNORE); spdlog::info("Process {0} received token {1} from
+//         process {2}", world_rank, token, world_size - 1);
 //     }
 //     MPI_Finalize();
 // }
-
-
-
 
 // #include <spdlog/spdlog.h>
 // #include <spdlog/sinks/basic_file_sink.h> // 或者 rotating_file_sink.h
 
 // int main() {
 //     // 创建一个输出到文件的sink
-//     auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/my_log.txt", true);
+//     auto file_sink =
+//     std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/my_log.txt",
+//     true);
 //     // 如果需要滚动日志，可以使用 rotating_file_sink
-//     // auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>("logs/my_log.txt", 1048576 * 5, 3);
+//     // auto file_sink =
+//     std::make_shared<spdlog::sinks::rotating_file_sink_mt>("logs/my_log.txt",
+//     1048576 * 5, 3);
 
 //     // 将默认日志记录器设置为输出到文件
 //     // spdlog::default_logger()->sinks().clear(); // 清除默认的控制台输出sink

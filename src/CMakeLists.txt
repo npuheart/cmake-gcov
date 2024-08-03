@@ -34,3 +34,6 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/common/config.h.in ${CMAKE_CURRENT_SO
 
 # 添加编译参数
 target_compile_definitions(${PROJECT_NAME}_dev PUBLIC USE_CUDA_COMPILER)
+
+
+target_compile_options(${PROJECT_NAME}_dev PRIVATE -Wall -Wextra -Werror=return-type)
