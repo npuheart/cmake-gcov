@@ -10,6 +10,7 @@
 #include <iostream>
 #include <Apple/lib.h>
 #include <Adder.h>
+#include "test.h"
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("create zip", "[create_zip]")
@@ -24,9 +25,9 @@ TEST_CASE("create zip", "[create_zip]")
     REQUIRE(a(0, 1) == 1);
 }
 
-TEST_CASE("create zip2", "[create_zip]")
+TEST_CASE("cuda minial function", "[cuda_common_1]")
 {
-    REQUIRE(a(1, 0) == 1);
+    main_cuda();
 }
 
 

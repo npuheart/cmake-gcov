@@ -7,7 +7,7 @@ FetchContent_Declare(
 )  
 FetchContent_MakeAvailable(Catch2)  
 
-add_executable(${PROJECT_NAME}_tests test.cpp)
+add_executable(${PROJECT_NAME}_tests test.cpp test.cu)
 
 target_link_libraries(${PROJECT_NAME}_tests PUBLIC ${PROJECT_NAME}_dev Catch2::Catch2WithMain)
 
