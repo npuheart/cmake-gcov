@@ -23,5 +23,15 @@ int main(int argc, char* argv[]) {
     LOG_WARN("2");
     // LOG_ERROR("2");
     parse_arguments(argc, argv);
+    auto param = ParameterRoot::get_instance();
+
+    // TODO: 简便读取
+    // auto fov = param["from_file"]["camera"]["fov"];
+    auto from_file = std::get<std::shared_ptr<Parameter>>(param->value("from_file"));
+    auto camera    = std::get<std::shared_ptr<Parameter>>(from_file->value("camera"));
+    auto fov = std::get<double>(camera->value("fov"));  
+    
+    spdlog::info("fov: {}", fov);
+
 }
 

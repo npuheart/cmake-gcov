@@ -22,9 +22,10 @@
 #include <common/log.h>
 #include <cxxopts.hpp>
 
+
 class Parameter {
   public:
-    using _valuetype = std::variant<bool, int, double, std::string, std::shared_ptr<Parameter>>;
+    using _valuetype = std::variant<bool, int, double, std::string, std::vector<double>, std::shared_ptr<Parameter>>;
     using _functype  = std::function<void(const std::string&, const _valuetype&, const std::string&)>;
 
   public:
@@ -53,9 +54,6 @@ class Parameter {
 
 struct ParameterRoot : mn::ManagedSingleton<ParameterRoot>, Parameter {};
 
-
-
-
 // NOTE: 目前只能读取 std::string 和 double 类型的数据( int 会被转换成 double )
 void json_to_param(const nlohmann::json& jsonData, Parameter& param){
     for (auto& [key, value] : jsonData.items()) {
@@ -67,7 +65,19 @@ void json_to_param(const nlohmann::json& jsonData, Parameter& param){
             auto subparam = std::make_shared<Parameter>();
             param.set_value(key, subparam);
             json_to_param(jsonData.at(key), *subparam);
-        }
+        } else if (jsonData.at(key).is_array()) {
+            // 遍历 JSON 数组，并将每个元素存储到 vector 中
+            std::vector<double> values;
+            auto jsonArray = jsonData.at(key);
+            for (const auto& element : jsonArray) {
+                if (element.is_number()){
+                    values.push_back(element.get<double>());
+                } else {
+                    spdlog::warn("不支持数字以外类型的数组: {}", key);
+                }
+            }
+            param.set_value(key, values);
+        } 
         else {
             spdlog::warn("Skip item: {}", key);
         }
@@ -91,27 +101,6 @@ void parse_json_file() {
 
     json_to_param(jsonData, *param_from_file);
 
-    // spdlog::info("file: {}", file);
-
-    // auto json = std::make_shared<JsonFile>(file);
-    // // json->for_each();
-    // int N_s = json->get_value<double>("path_output");
-    // json->printData();
-
-    // auto param_linear_solver = std::make_shared<Parameter>();
-    // auto param_newton_solver = std::make_shared<Parameter>();
-    // auto param_line_search   = std::make_shared<Parameter>();
-
-    // param_linear_solver->set_value("tolerance", 0.001);
-    // param_newton_solver->set_value("black", true);
-    // param_newton_solver->set_value("black", 1);
-    // param_newton_solver->set_value("line_search", param_line_search);
-    // param_line_search->set_value("step", 0.3);
-
-    // param_root->set_value("linear_solver", param_linear_solver);
-    // param_root->set_value("newton_solver", param_newton_solver);
-    // param_root->set_value("haha", 0.2);
-
     auto func = [](const std::string& key, const Parameter::_valuetype& value, const std::string& tag) {
         if (auto p = std::get_if<std::shared_ptr<Parameter>>(&value)) {
             spdlog::info("{}{} :", tag, key);
@@ -123,6 +112,11 @@ void parse_json_file() {
             spdlog::info("{}{}: {}", tag, key, *p);
         } else if (auto p = std::get_if<std::string>(&value)) {
             spdlog::info("{}{}: {}", tag, key, *p);
+        } else if (auto p = std::get_if<std::vector<double>>(&value)) {
+            spdlog::info("{}{}:", tag, key);
+            for (const auto& v : *p) {
+                spdlog::info("{}    {}",tag, v);
+            }
         } else {
             spdlog::error("Parameter type not supported");
         }
