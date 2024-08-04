@@ -8,143 +8,148 @@
 ///
 ///
 
-#include <common/json.h>
-#include <common/log.h>
-#include <cxxopts.hpp>
+#include <fstream>
+#include <iostream>
 #include <map>
 #include <variant>
 #include <vector>
 
 #include <MnBase/Singleton.h>
+#include <common/FileSystem.h>
+#include <nlohmann/json.hpp>
+
+#include <common/json.h>
+#include <common/log.h>
+#include <cxxopts.hpp>
 
 class Parameter {
-public:
-  using _valuetype =
-      std::variant<bool, int, double, std::string, std::shared_ptr<Parameter>>;
-  using _functype = std::function<void(const std::string &, const _valuetype &,
-                                       const std::string &)>;
+  public:
+    using _valuetype = std::variant<bool, int, double, std::string, std::shared_ptr<Parameter>>;
+    using _functype  = std::function<void(const std::string&, const _valuetype&, const std::string&)>;
 
-public:
-  auto value(const std::string &key) { return _map[key]; }
+  public:
+    const _valuetype& value(const std::string& key) const { return _map.at(key); }
 
-  template <typename T> auto set_value(const std::string &key, const T &value) {
-    _map[key] = value;
-    return _map[key];
-  }
-
-  void for_each(const _functype &func, const std::string &tag) const {
-    for (const auto &[key, value] : _map) {
-      if (auto p = std::get_if<std::shared_ptr<Parameter>>(&value)) {
-        func(key, value, tag);
-        (*p)->for_each(func, tag + "    ");
-      } else {
-        func(key, value, tag);
-      }
+    template <typename T>
+    auto set_value(const std::string& key, const T& value) {
+        _map[key] = value;
+        return _map[key];
     }
-  }
 
-  std::string _key;
-  std::map<std::string, _valuetype> _map;
+    void for_each(const _functype& func, const std::string& tag) const {
+        for (const auto& [key, value] : _map) {
+            if (auto p = std::get_if<std::shared_ptr<Parameter>>(&value)) {
+                func(key, value, tag);
+                (*p)->for_each(func, tag + "    ");
+            } else {
+                func(key, value, tag);
+            }
+        }
+    }
+
+    std::string                       _name;
+    std::map<std::string, _valuetype> _map;
 };
 
-namespace mn {
-struct ParameterRoot : ManagedSingleton<ParameterRoot>, Parameter {};
-} // namespace mn
+struct ParameterRoot : mn::ManagedSingleton<ParameterRoot>, Parameter {};
 
-void initial_parameters() {
 
-  auto param_root = mn::ParameterRoot::instance();
-  auto param_linear_solver = std::make_shared<Parameter>();
-  auto param_newton_solver = std::make_shared<Parameter>();
-  auto param_line_search = std::make_shared<Parameter>();
 
-  param_linear_solver->set_value("tolerance", 0.001);
-  param_newton_solver->set_value("black", true);
-  param_newton_solver->set_value("black", 1);
-  param_newton_solver->set_value("line_search", param_line_search);
-  param_line_search->set_value("step", 0.3);
 
-  param_root.set_value("linear_solver", param_linear_solver);
-  param_root.set_value("newton_solver", param_newton_solver);
-  param_root.set_value("haha", 0.2);
-
-  auto func = [](const std::string &key, const Parameter::_valuetype &value,
-                 const std::string &tag) {
-    if (auto p = std::get_if<std::shared_ptr<Parameter>>(&value)) {
-      spdlog::info("{}{} :", tag, key);
-    } else if (auto p = std::get_if<bool>(&value)) {
-      spdlog::info("{}{}: {}", tag, key, *p);
-    } else if (auto p = std::get_if<int>(&value)) {
-      spdlog::info("{}{}: {}", tag, key, *p);
-    } else if (auto p = std::get_if<double>(&value)) {
-      spdlog::info("{}{}: {}", tag, key, *p);
-    } else if (auto p = std::get_if<std::string>(&value)) {
-      spdlog::info("{}{}: {}", tag, key, *p);
-    } else {
-      spdlog::error("Parameter type not supported");
+// NOTE: 目前只能读取 std::string 和 double 类型的数据( int 会被转换成 double )
+void json_to_param(const nlohmann::json& jsonData, Parameter& param){
+    for (auto& [key, value] : jsonData.items()) {
+        if (jsonData.at(key).is_number()) {
+            param.set_value(key, jsonData.at(key).get<double>());
+        } else if (jsonData.at(key).is_string()) {
+            param.set_value(key, jsonData.at(key).get<std::string>());
+        } else if (jsonData.at(key).is_object()) { // 访问嵌套的对象
+            auto subparam = std::make_shared<Parameter>();
+            param.set_value(key, subparam);
+            json_to_param(jsonData.at(key), *subparam);
+        }
+        else {
+            spdlog::warn("Skip item: {}", key);
+        }
     }
-  };
-  param_root.for_each(func, "");
 }
 
-auto parse_arguments(int argc, char *argv[]) {
+void parse_json_file() {
 
-  cxxopts::Options options("Scene_Loader", "Read simulation scene");
-  options.add_options()(
-      "f,file", "Scene Configuration File",
-      cxxopts::value<std::string>()->default_value("scenes/scene.json"));
-  options.add_options()("g,gile", "Generate Something",
-                        cxxopts::value<int>()->default_value("0"));
-  options.add_options()("h,help", "Show Help");
+    auto param_root = ParameterRoot::get_instance();
+    auto filename   = std::get<std::string>(param_root->value("file"));
 
-  auto result = options.parse(argc, argv);
-  if (result.count("help")) {
-    std::cout << options.help() << std::endl;
-    exit(0);
-  }
-  
-  auto fn = result["file"].as<std::string>();
-  spdlog::info("loading scene [{}]\n", fn);
+    std::ostringstream oss;
+    ZIRAN::FILESYSTEM::readFile(oss, filename);
+    std::string    fileContents = oss.str();
+    nlohmann::json jsonData     = nlohmann::json::parse(fileContents);
+
+    // jsonData, param_root
+    auto param_from_file = std::make_shared<Parameter>();
+    param_root->set_value("from_file", param_from_file);
+
+
+    json_to_param(jsonData, *param_from_file);
+
+    // spdlog::info("file: {}", file);
+
+    // auto json = std::make_shared<JsonFile>(file);
+    // // json->for_each();
+    // int N_s = json->get_value<double>("path_output");
+    // json->printData();
+
+    // auto param_linear_solver = std::make_shared<Parameter>();
+    // auto param_newton_solver = std::make_shared<Parameter>();
+    // auto param_line_search   = std::make_shared<Parameter>();
+
+    // param_linear_solver->set_value("tolerance", 0.001);
+    // param_newton_solver->set_value("black", true);
+    // param_newton_solver->set_value("black", 1);
+    // param_newton_solver->set_value("line_search", param_line_search);
+    // param_line_search->set_value("step", 0.3);
+
+    // param_root->set_value("linear_solver", param_linear_solver);
+    // param_root->set_value("newton_solver", param_newton_solver);
+    // param_root->set_value("haha", 0.2);
+
+    auto func = [](const std::string& key, const Parameter::_valuetype& value, const std::string& tag) {
+        if (auto p = std::get_if<std::shared_ptr<Parameter>>(&value)) {
+            spdlog::info("{}{} :", tag, key);
+        } else if (auto p = std::get_if<bool>(&value)) {
+            spdlog::info("{}{}: {}", tag, key, *p);
+        } else if (auto p = std::get_if<int>(&value)) {
+            spdlog::info("{}{}: {}", tag, key, *p);
+        } else if (auto p = std::get_if<double>(&value)) {
+            spdlog::info("{}{}: {}", tag, key, *p);
+        } else if (auto p = std::get_if<std::string>(&value)) {
+            spdlog::info("{}{}: {}", tag, key, *p);
+        } else {
+            spdlog::error("Parameter type not supported");
+        }
+    };
+    param_root->for_each(func, "");
 }
 
-namespace CmdArgument {
-/// cmd0 for the hard young's modulus, cmd1 for the soft young's modulus
-inline static double cmd0 = 0, cmd1 = 0;
-} // namespace CmdArgument
+auto parse_arguments(int argc, char* argv[]) {
 
-namespace CaseSettings {
+    cxxopts::Options options("Scene_Loader", "Read simulation scene");
+    options.add_options()("f,file", "Scene Configuration File",
+                          cxxopts::value<std::string>()->default_value("scenes/scene.json"));
+    options.add_options()("g,gile", "Generate Something", cxxopts::value<int>()->default_value("0"));
+    options.add_options()("h,help", "Show Help");
 
-inline static double v_mu = 0.001;
-inline static std::string output_folder;
-} // namespace CaseSettings
-namespace HOTSettings {
-inline static double cgratio = 0.5;
-inline static double characterNorm;
-inline static double cneps{1e-5};
-inline static bool useAdaptiveHessian{false};
-inline static bool useCN{false};
-inline static bool matrixFree{false}; ///< 0: matrix free, 1: matrix
-inline static bool project{false};    ///< project dPdF or not
-inline static bool systemBCProject{
-    false}; ///< BC project system (matrix & rhs) or not
-inline static bool linesearch{false};
-inline static int boundaryType{0}; ///< 0: all sticky 1: has slip
-inline static int lsolver{
-    0}; ///< 0: newton with multigrid solver 1: newton with minres 2: newton
-        ///< with cg 3: LBFGS with multigrid 4: direct solver
-inline static int Ainv{
-    0}; ///< 0: entry 1: block 2: mass (only works with minres)
-inline static int smoother{
-    0}; ///< 0: (optimal) Jacobi, 1: Optimal Jacobi, 2: PCG, 3: LBFGS-OJ, 4:
-        ///< Minres, 5: GS, 6: Chebyshev, 7: Incomplete Cholesky
-inline static int coarseSolver{0}; ///< Options same with smoother
-inline static int levelCnt{1}, times{1};
-inline static int levelscale{0};
-inline static int debugMode{0}; ///< open all
-inline static double omega{1};
-inline static double topomega{0.1};
-inline static bool revealJacobi{false};
-inline static bool revealVcycle{false};
-inline static bool topDownMGS{false};
-inline static bool useBaselineMultigrid{false};
-} // namespace HOTSettings
+    // 打印帮助
+    auto result = options.parse(argc, argv);
+    if (result.count("help")) {
+        spdlog::info("{}", options.help());
+        exit(0);
+    }
+
+    // 将参数读入参数单例(ParameterRoot)
+    auto param_root = ParameterRoot::get_instance();
+    param_root->set_value("file", result["file"].as<std::string>());
+    param_root->set_value("gile", result["gile"].as<int>());
+
+    // 解析配置文件中的参数
+    parse_json_file();
+}

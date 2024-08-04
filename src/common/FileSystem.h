@@ -5,7 +5,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <system_error>
-#include <spdlog/spdlog.h>
+#include <common/log.h>
 #ifdef _WIN32
 #include <direct.h>
 #endif
@@ -53,14 +53,17 @@ inline void createPath(const std::string& dir)
   reads whole file into memory so should
   only be used for small files
 */
-inline void readFile(std::ostream& contents, const std::string& filename)
-{
-    std::ifstream in;
-    std::ios_base::iostate exceptionMask = in.exceptions() | std::ios::failbit;
-    in.exceptions(exceptionMask);
-    in.open(filename, std::ios::in | std::ios::binary);
-    contents << in.rdbuf();
-    in.close();
+inline void readFile(std::ostream& contents, const std::string& filename) {
+    try {
+        std::ifstream          in;
+        std::ios_base::iostate exceptionMask = in.exceptions() | std::ios::failbit;
+        in.exceptions(exceptionMask);
+        in.open(filename, std::ios::in | std::ios::binary);
+        contents << in.rdbuf();
+        in.close();
+    } catch (const std::ifstream::failure& e) {
+        LOG_ERROR("{}, Exception opening/reading file : {}.", e.what(), filename);
+    }
 }
 
 inline std::string fileToString(std::istream& contents)
