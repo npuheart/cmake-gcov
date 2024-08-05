@@ -19,13 +19,14 @@
 template <typename T, int dim>
 struct tmp
 {
+    using padding_size = std::conditional<dim == 3, std::integral_constant<int, 6>, std::integral_constant<int, 8>>;
+    using idx_type = std::conditional<std::is_same<T, float>::value, int32_t, int64_t>::type;
+    
     std::array<T, dim> a;
     T m;
     std::array<T, dim> new_v;
-    using idx_type = std::conditional<std::is_same<T, float>::value, int32_t, int64_t>::type;
     idx_type idx;
     
-    using padding_size = std::conditional<dim == 3, std::integral_constant<int, 6>, std::integral_constant<int, 8>>;
     std::array<T, padding_size::type::value> padding;
     
     T phase_field;
