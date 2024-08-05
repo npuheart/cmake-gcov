@@ -1,5 +1,6 @@
 #ifndef FORWARD_H
 #define FORWARD_H
+// #define EIGEN_MALLOC_ALREADY_ALIGNED 0
 #include <Eigen/StdVector>
 #include <vector>
 
