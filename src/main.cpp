@@ -7,7 +7,8 @@
 /// @brief main runner
 ///
 ///
-#include <Configurations.h>
+#include <common/Parameters.h>
+#include <MPM/TmpSimulation.h>
 
 
 // 一个类，包含
@@ -33,5 +34,11 @@ int main(int argc, char* argv[]) {
     
     spdlog::info("fov: {}", fov);
 
+    
+    TmpSimulation<double, 3> sim;
+
+    sim.simulate();
+
+    return 0;
 }
 
