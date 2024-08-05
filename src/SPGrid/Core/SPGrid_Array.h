@@ -94,14 +94,14 @@ public:
     inline T& operator()(const uint64_t offset)
     {
         static_assert(dim == 3, "Dimension mismatch");
-        return *reinterpret_cast<T*>(reinterpret_cast<uint64_t>(data_ptr) + T_MASK::Packed_Offset<di, dj, dk>(offset));
+        return *reinterpret_cast<T*>(reinterpret_cast<uint64_t>(data_ptr) + T_MASK::template Packed_Offset<di, dj, dk>(offset));
     }
 
     template <int di, int dj>
     inline T& operator()(const uint64_t offset)
     {
         static_assert(dim == 2, "Dimension mismatch");
-        return *reinterpret_cast<T*>(reinterpret_cast<uint64_t>(data_ptr) + T_MASK::Packed_Offset<di, dj>(offset));
+        return *reinterpret_cast<T*>(reinterpret_cast<uint64_t>(data_ptr) + T_MASK::template Packed_Offset<di, dj>(offset));
     }
 
     // Debug_Get() functions operate like the operator parenthesis, but also check if the memory address is resident

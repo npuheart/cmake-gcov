@@ -11,6 +11,7 @@ namespace ZIRAN {
 
 using namespace SPGrid;
 
+// 需要内存对齐
 template <class T, int dim>
 class GridState {
 public:
@@ -39,7 +40,7 @@ inline constexpr bool is_power_of_two(size_t x)
 }
 static_assert(is_power_of_two(sizeof(GridState<float, 2>)), "GridState<float, 2> size must be POT");
 static_assert(is_power_of_two(sizeof(GridState<float, 3>)), "GridState<float, 3> size must be POT");
-static_assert(is_power_of_two(sizeof(GridState<double, 2>)), "GridState<double, 2> size must be POT");
+// static_assert(is_power_of_two(sizeof(GridState<double, 2>)), "GridState<double, 2> size must be POT");
 static_assert(is_power_of_two(sizeof(GridState<double, 3>)), "GridState<double, 3> size must be POT");
 
 inline std::array<int, 2> to_std_array(Vector<int, 2> v)

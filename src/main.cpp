@@ -9,6 +9,7 @@
 ///
 #include <common/Parameters.h>
 #include <MPM/TmpSimulation.h>
+#include <MPM/MpmGrid.h>
 
 
 // 一个类，包含
@@ -20,6 +21,7 @@ int main(int argc, char* argv[]) {
     ParameterRoot::startup();
     init_logging(argc, argv);
     parse_arguments(argc, argv);
+    ZIRAN::MpmGrid<double, 3> grid;
     TmpSimulation<double, 3> sim;
     
     sim.end_frame = 100;

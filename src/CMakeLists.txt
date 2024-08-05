@@ -11,7 +11,7 @@ target_include_directories(${PROJECT_NAME}_dev PUBLIC ".")
 
 # 链接子项目
 target_link_libraries(${PROJECT_NAME}_dev PUBLIC Apple mncuda spgrid)
-target_link_libraries(${PROJECT_NAME}_dev PUBLIC tbb partio pugixml)
+target_link_libraries(${PROJECT_NAME}_dev PUBLIC tbb partio pugixml Tick)
 
 find_package(spdlog REQUIRED)
 target_link_libraries(${PROJECT_NAME}_dev PUBLIC spdlog::spdlog)
