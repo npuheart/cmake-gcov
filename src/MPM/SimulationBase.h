@@ -2,6 +2,7 @@
 #define SIMULATION_BASE_H
 // #include <Ziran/CS/Util/ErrorContext.h>
 // #include <Ziran/CS/Util/Filesystem.h>
+#include <MPM/TimeStepping.h>
 #include <common/DataDir.h>
 // #include <Ziran/CS/Util/PrettyPrinting.h>
 // #include <Ziran/CS/Util/RandomNumber.h>
@@ -9,49 +10,44 @@
 // #include <Ziran/Sim/TimeStepping.h>
 #include <fstream>
 #include <functional>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <math.h>
 #include <sstream>
-#include <vector>
-#include <type_traits>
 #include <tbb/tbb.h>
+#include <type_traits>
+#include <vector>
 
 namespace ZIRAN {
 class RestartException : public std::runtime_error {
-public:
+  public:
     int frame;
-    RestartException(int frame)
-        : std::runtime_error("Restart Simulation")
-        , frame(frame)
-    {
-    }
+    RestartException(int frame) : std::runtime_error("Restart Simulation"), frame(frame) {}
 };
 
 class SimulationBase {
-protected:
-    int frame;
-    int substep;
+  protected:
+    int  frame;
+    int  substep;
     bool restarting;
 
-public:
-    // TimeStepping step;
-    DataDir output_dir;
-    bool write_substeps;
-    bool write_files;
-    bool write_log;
-    bool verbose;
-    int start_frame, end_frame, restart_frame;
-    // std::shared_ptr<LogWorker> logger;
-    bool diff_test;
-    double diff_test_perturbation_scale;
-    std::vector<std::function<void(int)>> initialize_callbacks;
-    std::vector<std::function<void(int)>> reinitialize_callbacks;
-    std::vector<std::function<void(int)>> begin_frame_callbacks;
-    std::vector<std::function<void(int)>> end_frame_callbacks;
-    std::vector<std::function<void(int, int)>> end_time_step_callbacks;
+  public:
+    TimeStepping                                               step;
+    DataDir                                                    output_dir;
+    bool                                                       write_substeps;
+    bool                                                       write_files;
+    bool                                                       write_log;
+    bool                                                       verbose;
+    int                                                        start_frame, end_frame, restart_frame;
+    bool                                                       diff_test;
+    double                                                     diff_test_perturbation_scale;
+    std::vector<std::function<void(int)>>                      initialize_callbacks;
+    std::vector<std::function<void(int)>>                      reinitialize_callbacks;
+    std::vector<std::function<void(int)>>                      begin_frame_callbacks;
+    std::vector<std::function<void(int)>>                      end_frame_callbacks;
+    std::vector<std::function<void(int, int)>>                 end_time_step_callbacks;
     std::vector<std::function<void(int, int, double, double)>> begin_time_step_callbacks;
-    std::vector<std::function<void(int)>> restart_callbacks;
+    std::vector<std::function<void(int)>>                      restart_callbacks;
 
     std::vector<std::function<void(int, int)>> general_callbacks;
 
@@ -59,36 +55,19 @@ public:
 
     bool full_implicit;
 
-    enum LinearSolverType {
-        MINRES,
-        CG
-    } linear_solver_type;
+    enum LinearSolverType { MINRES, CG } linear_solver_type;
 
     SimulationBase()
-        : frame(0)
-        , substep(0)
-        , restarting(false)
-        , output_dir("output")
-        , write_substeps(false)
-        , write_files(true)
-        , write_log(true)
-        , verbose(false)
-        , start_frame(0)
-        , end_frame(0)
-        , restart_frame(0)
-        // , logger(nullptr)
-        , diff_test(false)
-        , diff_test_perturbation_scale((double)1)
-        , full_implicit(false)
-        , linear_solver_type(MINRES)
-    {
-    }
+        : frame(0), substep(0), restarting(false), output_dir("output"), write_substeps(false), write_files(true),
+          write_log(true), verbose(false), start_frame(0), end_frame(0), restart_frame(0)
+          // , logger(nullptr)
+          ,
+          diff_test(false), diff_test_perturbation_scale((double)1), full_implicit(false), linear_solver_type(MINRES) {}
 
     int getSubstep() const { return substep; }
     int getFrame() const { return frame; }
 
-    virtual ~SimulationBase()
-    {
+    virtual ~SimulationBase() {
         // if (logger)
         //     logger->printTimings();
     }
@@ -96,19 +75,15 @@ public:
     /**
       This function will only be called once
     */
-    virtual void initialize()
-    {
-        if (write_files || write_log) {
-            output_dir.createPath();
-        }
+    virtual void initialize() {
+        if (write_files || write_log) { output_dir.createPath(); }
         // if (write_log && logger) {
         //     logger->openLogFile(output_dir.absolutePath("log.txt"), restarting);
         // }
         for (auto f : initialize_callbacks) {
             f(frame);
         }
-        if (!restarting)
-            restart_frame = start_frame;
+        if (!restarting) restart_frame = start_frame;
     }
 
     /**
@@ -118,8 +93,7 @@ public:
       It is used to put the simulation into a consistent
       state given the values of its member variables
     */
-    virtual void reinitialize()
-    {
+    virtual void reinitialize() {
         for (auto f : reinitialize_callbacks) {
             f(frame);
         }
@@ -149,10 +123,8 @@ public:
     /**
       write to file
       */
-    virtual void write(const std::string& filename)
-    {
-        if (!write_files)
-            return;
+    virtual void write(const std::string& filename) {
+        if (!write_files) return;
         // std::ofstream file = output_dir.openBinaryOutput(filename);
         // ZIRAN_INFO("Writing ", filename);
         // writeState(file);
@@ -166,8 +138,7 @@ public:
     /**
       read from file
     */
-    virtual void read(const std::string& filename)
-    {
+    virtual void read(const std::string& filename) {
         // int binary_ver_data;
         // try {
         //     std::ifstream binary_ver_file = output_dir.openTextInput("binary_ver.txt");
@@ -183,21 +154,18 @@ public:
         // std::ifstream last_written = output_dir.openTextInput("last_written.txt");
         // int last_written_frame;
         // last_written >> last_written_frame;
-        // ZIRAN_WARN_IF(last_written_frame < frame, "Frame is after the last written frame ", last_written_frame, ". Could be reading stale data");
-        // std::ifstream file = output_dir.openBinaryInput(filename);
-        // ZIRAN_INFO("Reading ", filename);
-        // readState(file);
+        // ZIRAN_WARN_IF(last_written_frame < frame, "Frame is after the last written frame ", last_written_frame, ".
+        // Could be reading stale data"); std::ifstream file = output_dir.openBinaryInput(filename); ZIRAN_INFO("Reading
+        // ", filename); readState(file);
     }
 
     /**
       Constructs the output filename
     */
-    virtual std::string outputFileName(const std::string& name = "restart", const std::string& suffix = ".dat")
-    {
+    virtual std::string outputFileName(const std::string& name = "restart", const std::string& suffix = ".dat") {
         std::ostringstream filename;
         filename << name << "_" << frame;
-        if (substep > 0)
-            filename << "_" << substep;
+        if (substep > 0) filename << "_" << substep;
         filename << suffix;
         return filename.str();
     }
@@ -205,8 +173,7 @@ public:
     /**
       Callback for beginning of the frame
     */
-    virtual void beginFrame(int frame)
-    {
+    virtual void beginFrame(int frame) {
         for (auto f : begin_frame_callbacks) {
             f(frame);
         }
@@ -228,19 +195,16 @@ public:
       {
     */
 
-    virtual void endFrame(int frame)
-    {
+    virtual void endFrame(int frame) {
         for (auto f : end_frame_callbacks) {
             f(frame);
-            if (restarting)
-                break;
+            if (restarting) break;
         }
     }
     /**
       Callback for beginning of the time step
     */
-    virtual void beginTimeStep(int frame, int substep, double time, double dt)
-    {
+    virtual void beginTimeStep(int frame, int substep, double time, double dt) {
         for (auto f : begin_time_step_callbacks) {
             f(frame, substep, time, dt);
         }
@@ -248,11 +212,9 @@ public:
     /**
       Callback for end of the time step
     */
-    virtual void endTimeStep(int frame, int substep)
-    {
-        if (write_substeps) {
-            write(outputFileName());
-        }
+    virtual void endTimeStep(int frame, int substep) {
+        spdlog::info("Frame: {}, Substep: {}", frame, substep);
+        if (write_substeps) { write(outputFileName()); }
         for (auto f : end_time_step_callbacks) {
             f(frame, substep);
         }
@@ -260,11 +222,7 @@ public:
     /**
       Callback to calculate dt
     */
-    virtual double calculateDt()
-    {
-        // return step.max_dt;
-        return 0.0;
-    }
+    virtual double calculateDt() { return step.max_dt; }
     /**
       Call restart when you want to begin the simulation by reading
       the data from a previous simulation
@@ -276,100 +234,89 @@ public:
 
       new_restart_frame should be the frame that we want to read data from
       */
-    virtual void restart(int new_restart_frame)
-    {
-        // // Not sure if the simulate loop is running when restart is called
-        // // If it is not setting start_frame should take care of it
-        // restart_frame = new_restart_frame;
-        // frame = restart_frame;
-        // // Can only restart from frame boundaries not substeps
-        // substep = 0;
-        // step.reset(frame);
-        // restarting = true;
-        // ZIRAN_INFO("Resetting time = ", step.time);
+    virtual void restart(int new_restart_frame) {
+        // Not sure if the simulate loop is running when restart is called
+        // If it is not setting start_frame should take care of it
+        restart_frame = new_restart_frame;
+        frame         = restart_frame;
+        // Can only restart from frame boundaries not substeps
+        substep = 0;
+        step.reset(frame);
+        restarting = true;
+        spdlog::info("Restarting from frame {}, time {}", frame, step.time);
     }
 
-    virtual void advanceOneFrame()
-    {
+    virtual void advanceOneFrame() {
         // ZIRAN_TIMER();
         beginFrame(frame);
-        // TimeStepping::Event e;
+        TimeStepping::Event e;
         // ZIRAN_EVENT(Color::BLUE, "Frame ", frame, Color::RESET);
-        // do {
-        //     ZIRAN_CONTEXT(substep);
-        //     bool overwrite_mode = Event == Level::getConsoleLevel();
-        //     ZIRAN_INFO("\n\n");
-        //     ZIRAN_EVENT(ProgressBar(step.time_since_last_frame / step.frame_dt),
-        //         overwrite_mode ? "" : ("frame " + std::to_string(frame)));
-        //     ZIRAN_EVENT(ProgressBar(step.time / (end_frame * step.frame_dt)));
-        //     ZIRAN_EVENT(Color::MAGENTA, "Substep ", substep, " of frame ", frame, Color::RESET);
-        //     if (overwrite_mode)
-        //         ZIRAN_EVENT('\r', moveCursorRelative(-4, 0));
+        do {
+            //     ZIRAN_CONTEXT(substep);
+            //     bool overwrite_mode = Event == Level::getConsoleLevel();
+            //     ZIRAN_INFO("\n\n");
+            //     ZIRAN_EVENT(ProgressBar(step.time_since_last_frame / step.frame_dt),
+            //         overwrite_mode ? "" : ("frame " + std::to_string(frame)));
+            //     ZIRAN_EVENT(ProgressBar(step.time / (end_frame * step.frame_dt)));
+            //     ZIRAN_EVENT(Color::MAGENTA, "Substep ", substep, " of frame ", frame, Color::RESET);
+            //     if (overwrite_mode)
+            //         ZIRAN_EVENT('\r', moveCursorRelative(-4, 0));
 
-        //     double dt = step.nextDt(calculateDt());
-        //     ZIRAN_CONTEXT(step.time);
-        //     ZIRAN_CONTEXT(dt);
-        //     beginTimeStep(frame, substep, step.time, dt);
-        //     advanceOneTimeStep(dt);
-        //     e = step.advance(dt);
-        //     substep++;
-        //     endTimeStep(frame, substep);
-        // } while (e == TimeStepping::Substep);
+            double dt = step.nextDt(calculateDt());
+            //     ZIRAN_CONTEXT(step.time);
+            //     ZIRAN_CONTEXT(dt);
+            spdlog::info("step.time : {}, dt : {})", step.time, dt);
+            beginTimeStep(frame, substep, step.time, dt);
+            advanceOneTimeStep(dt);
+            e = step.advance(dt);
+            substep++;
+            endTimeStep(frame, substep);
+        } while (e == TimeStepping::Substep);
         // ZIRAN_EVENT(ProgressBar(1.0));
         // ZIRAN_EVENT(ProgressBar(step.time / (end_frame * step.frame_dt)));
         substep = 0;
         endFrame(frame);
         if (!restarting) {
             write(outputFileName());
-        //     ZIRAN_ETA(end_frame - frame);
+            //     ZIRAN_ETA(end_frame - frame);
         }
     }
 
     /**
       Simulates from start frame to end_frame
     */
-    void simulate()
-    {
+    void simulate() {
         // ZIRAN_TIMER();
-        //Don't overwrite the data we will be reading in
-        if (!restarting)
-            write(outputFileName());
+        // Don't overwrite the data we will be reading in
+        if (!restarting) write(outputFileName());
 
         for (frame = restart_frame + 1; frame <= end_frame; frame++) {
-        //     ZIRAN_CONTEXT(frame);
-        //     if (restarting) {
-        //         ZIRAN_INFO("Restarting frame ", frame);
-        //         frame--; //Need to read the data from the last frame
-        //         read(outputFileName());
-        //         for (auto f : restart_callbacks) {
-        //             f(frame);
-        //         }
-        //         // restart_callbacks.clear();
-        //         restarting = false;
-        //         frame++;
-        //     }
+            //     ZIRAN_CONTEXT(frame);
+            spdlog::info("Frame: {}", frame);
+            if (restarting) {
+                //         ZIRAN_INFO("Restarting frame ", frame);
+                frame--; // Need to read the data from the last frame
+                read(outputFileName());
+                for (auto f : restart_callbacks) {
+                    f(frame);
+                }
+                restart_callbacks.clear();
+                restarting = false;
+                frame++;
+            }
             try {
                 advanceOneFrame();
-            }
-            catch (RestartException& e) {
-                restart(e.frame);
-            }
+            } catch (RestartException& e) { restart(e.frame); }
         }
     }
 
-    bool currentlyRestarting() const
-    {
-        return restarting;
-    }
+    bool currentlyRestarting() const { return restarting; }
 
-    int getCurrentFrame() const
-    {
-        return frame;
-    }
+    int getCurrentFrame() const { return frame; }
 
-    virtual bool useDouble() = 0;
-    virtual int dimension() = 0;
-    virtual const char* name() = 0;
+    virtual bool        useDouble() = 0;
+    virtual int         dimension() = 0;
+    virtual const char* name()      = 0;
 };
 } // namespace ZIRAN
 #endif

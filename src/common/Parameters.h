@@ -8,6 +8,17 @@
 ///
 ///
 
+// 使用方法
+// auto param = ParameterRoot::get_instance();
+// // TODO: 简便读取
+// // auto fov = param["from_file"]["camera"]["fov"];
+// auto from_file = std::get<std::shared_ptr<Parameter>>(param->value("from_file"));
+// auto camera    = std::get<std::shared_ptr<Parameter>>(from_file->value("camera"));
+// auto fov = std::get<double>(camera->value("fov"));  
+// spdlog::info("fov: {}", fov);
+
+
+#pragma once
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -21,6 +32,7 @@
 #include <common/json.h>
 #include <common/log.h>
 #include <cxxopts.hpp>
+
 
 
 class Parameter {
@@ -128,7 +140,7 @@ auto parse_arguments(int argc, char* argv[]) {
 
     cxxopts::Options options("Scene_Loader", "Read simulation scene");
     options.add_options()("f,file", "Scene Configuration File",
-                          cxxopts::value<std::string>()->default_value("scenes/scene.json"));
+                          cxxopts::value<std::string>()->default_value("../data/scene.json"));
     options.add_options()("g,gile", "Generate Something", cxxopts::value<int>()->default_value("0"));
     options.add_options()("h,help", "Show Help");
 
@@ -147,3 +159,6 @@ auto parse_arguments(int argc, char* argv[]) {
     // 解析配置文件中的参数
     parse_json_file();
 }
+
+
+
