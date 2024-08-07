@@ -1,6 +1,7 @@
 #ifndef MATH_TOOLS_H
 #define MATH_TOOLS_H
 #include <cmath>
+#include <cstdint>
 #include <mmintrin.h>
 #include <xmmintrin.h>
 #include <Ziran/CS/Util/Forward.h>

@@ -14,6 +14,7 @@ using Matrix = Eigen::Matrix<T, n, m, 0, n, m>;
 
 template <typename Type>
 using StdVector = std::vector<Type, Eigen::aligned_allocator<Type>>;
-
+template <typename DerivedV>
+using Field = std::vector<DerivedV, Eigen::aligned_allocator<DerivedV>>;
 } // namespace ZIRAN
 #endif

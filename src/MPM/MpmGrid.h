@@ -6,6 +6,8 @@
 #include <SPGrid/Core/SPGrid_Allocator.h>
 #include <SPGrid/Core/SPGrid_Page_Map.h>
 #include <type_traits>
+#include <memory>
+#include <tbb/tbb.h>
 
 namespace ZIRAN {
 

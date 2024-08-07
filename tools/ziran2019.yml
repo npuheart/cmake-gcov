@@ -4,6 +4,9 @@ spack:
   - metis
   - spdlog
   - openmpi
+  - cuda@12.5.1
+  - nlohmann-json
+  - cxxopts
   view: true
   concretizer:
     reuse: false

@@ -18,7 +18,12 @@ SPGrid sequentially allocates $N^{dim}$ entries of your self-defined **GridState
 
 ![image-20210318214309931](https://githubimages.pengfeima.cn/images/202408051723797.png)
 
+- **SparseGrid**：用于找到并访问 `GridState` 数据。
+- **SparseMask**：用于执行偏移转换。
+- **SPGrid_Page_Map**：用于记录那些被访问过的块。
+
 The simple concept of the SPGrid is that the whole grid field is grouped and divided into continuing **blocks**, whereas in each block the grids are ordered using a naive fashion. Each block's total size is designed to fill exactly a 4KB memory page size (log_2_page = 12), then the spatial index size inside each block can be determined by the GridState's size. Take the conserved variables $q$ as an example, if $q$ is the only channel stored in the GridState, the total entries in a block is $4096 / 16 = 256$, which yields $4 \times 8 \times 8$ indices in each direction. Hence, even for high order stencil access like 3rd-ENO, it happens within one block for most of the time with no more than 1-page offset. Even for grids near the block boundary, the offset is acceptable as the access does cross no more than 1 blocks: see the **node15** in the screenshot (https://dl.acm.org/doi/10.1145/2661229.2661269) below, also it is great for understanding the binary representation of the geometry coordinates, how it connects with the data bits, and how the frequently used bitwise shift operator is connected to getting the correct linear offset.
+
 
 ![image-20210318214813996](https://githubimages.pengfeima.cn/images/202408051725197.png)
 
