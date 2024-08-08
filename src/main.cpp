@@ -9,6 +9,7 @@
 ///
 #include<VtuIO.h>
 int main(int argc, char* argv[]) {
+    init_logging(argc, argv);
 
     std::vector<double>      v1{1, 2, 1};
     std::vector<double>      v2{1, 2, 2};
