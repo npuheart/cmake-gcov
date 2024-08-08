@@ -24,6 +24,15 @@
 
 #define LOG_INFO(fmt, ...) spdlog::info("{:20}:{:<4}   | " fmt, __FILE__, __LINE__, ##__VA_ARGS__);
 
+#define ASSERT(x) ASSERT_HELPER((x), #x, "")
+#define ASSERT_INFO(x, fmt, ...) ASSERT_HELPER((x), #x, fmt, ##__VA_ARGS__)
+#define ASSERT_HELPER(x, x_name, fmt, ...)                                                                             \
+    if (!x) { LOG_ERROR("False expression : {}  |  " fmt, x_name, ##__VA_ARGS__) }
+
+#define NOT_IMPLEMENTED LOG_ERROR("{} not implemented.", std::string(__func__))
+
+// BOW_TIMER_FLAG("Elasticity");
+
 void init_logging(int argc, char* argv[]) {
 
     spdlog::set_level(spdlog::level::info);
