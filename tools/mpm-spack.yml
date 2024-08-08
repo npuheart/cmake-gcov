@@ -1,0 +1,20 @@
+# This is a Spack Environment file.
+#
+# It describes a set of packages to be installed, along with
+# configuration settings.
+spack:
+  # add package specs to the `specs` list
+  specs:
+  - kokkos@master+cuda+cuda_constexpr+cuda_lambda+wrapper cuda_arch=89 cxxstd=20
+  - openvdb
+  - metis
+  - spdlog
+  - openmpi
+  - cuda@12.5.1
+  - nlohmann-json
+  - cxxopts
+  view: true
+  concretizer:
+    unify: true
+
+
