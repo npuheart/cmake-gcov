@@ -12,8 +12,9 @@
 #include <vector>
 
 // 将一个vector转换成字符串
-std::vector<std::string> convert(std::vector<double> first) {
-    std::vector<std::string> result;
+template <typename T, template<typename> typename Vector>
+Vector<std::string> vectors_to_strings(const Vector<T> & first) {
+    Vector<std::string> result;
     std::stringstream        sstream;
     for (auto i : first)
         sstream << i << " ";
@@ -21,11 +22,11 @@ std::vector<std::string> convert(std::vector<double> first) {
     return result;
 }
 
-template <typename T, typename... Args>
-std::vector<std::string> convert(T first, Args... rest) {
-    std::vector<std::string> temp1 = convert(first);
-    std::vector<std::string> temp2 = convert(rest...);
-    std::vector<std::string> temp;
+template <typename T, template<typename> typename Vector, typename... Args>
+Vector<std::string> vectors_to_strings(const Vector<T>& first, const Args&... rest) {
+    const Vector<std::string>& temp1 = vectors_to_strings(first);
+    const Vector<std::string>& temp2 = vectors_to_strings(rest...);
+    Vector<std::string> temp;
     for (auto i : temp1)
         temp.push_back(i);
     for (auto i : temp2)
@@ -33,14 +34,14 @@ std::vector<std::string> convert(T first, Args... rest) {
     return temp;
 }
 
-
-void fun_1(
-    const std::string &filename,
-    const std::string &points,
+template <template<typename> typename Vector>
+void write_particles_to_vtu(
     const int& length,
-    const std::vector<std::string> &contents, 
-    const std::vector<std::string> &tags, 
-    const std::vector<int> &value_sizes
+    const std::string &points,
+    const std::string &filename,
+    const Vector<std::string> &contents, 
+    const Vector<std::string> &tags, 
+    const Vector<int> &value_sizes
     )
 {
     const int num  = contents.size();
@@ -100,12 +101,20 @@ void fun_1(
     xml_node.save_file(filename.c_str());
 }
 
-
-
-template <typename... Args>
-void writevtu(std::vector<std::string> tags, Args... contents_raw) {
+template <typename T, template <typename> typename Vector, typename... Args>
+void write_particles_to_vtu(const std::string& filename, 
+              const Vector<T>& points_raw, 
+              const Vector<std::string>& tags,
+              const Args&... contents_raw) 
+{
     ASSERT_INFO(sizeof...(Args) == tags.size(), "{} == {}", sizeof...(Args), tags.size());
-    auto               contents = convert(contents_raw...);
-    const int          num  = sizeof...(Args);
-    fun_1("test.vtu", "0 0 0 ", 1, contents, tags, {3, 3, 3});
+    auto points   = vectors_to_strings(points_raw)[0];
+    auto contents = vectors_to_strings(contents_raw...);
+    std::vector<int> value_sizes;
+
+    for (auto i : contents)
+        value_sizes.push_back(3);
+    
+    write_particles_to_vtu(points_raw.size()/3, points, filename, contents, tags, value_sizes);
 }
+

@@ -11,10 +11,11 @@
 int main(int argc, char* argv[]) {
     init_logging(argc, argv);
 
+    std::vector<double>      points{1, 2, 1};
     std::vector<double>      v1{1, 2, 1};
     std::vector<double>      v2{1, 2, 2};
     std::vector<double>      v3{1, 2, 3};
     std::vector<std::string> tags{"v1", "v2", "v3"};
-    writevtu(tags,v1,v2,v3);
+    write_particles_to_vtu("aaa.vtu", points, tags,v1,v2,v3);
     return 0;
 }
