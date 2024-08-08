@@ -7,9 +7,11 @@
 /// @brief main runner
 ///
 ///
+#include <Eigen/Dense>
+#include <MPM/MpmGrid.h>
 #include <MPM/TmpSimulation.h>
 #include <common/Parameters.h>
-#include <MPM/MpmGrid.h>
+#include <hello.h>
 
 // 一个类，包含
 //             cxxopts::Options options
@@ -21,19 +23,16 @@ struct tmp {
     using idx_type     = std::conditional<std::is_same<T, float>::value, int32_t, int64_t>::type;
 
     ZIRAN::Vector<T, dim> a;
-    T                  m;
+    T                     m;
     ZIRAN::Vector<T, dim> new_v;
-    idx_type           idx;
+    idx_type              idx;
 
     ZIRAN::Vector<T, padding_size::type::value> padding;
 
     T phase_field;
     T phase_field_multiplier;
 
-    void reset()
-    {
-
-    }
+    void reset() {}
 };
 
 namespace ZIRAN {
@@ -63,8 +62,7 @@ class MPMGrid {
     std::vector<uint64_t> particle_sorter;
 
   public:
-    MPMGrid()
-        : origin_offset(SparseMask::Linear_Offset(half_spgrid_size, half_spgrid_size, half_spgrid_size)) {
+    MPMGrid() : origin_offset(SparseMask::Linear_Offset(half_spgrid_size, half_spgrid_size, half_spgrid_size)) {
         if constexpr (dim == 2) {
             grid = std::make_unique<SparseGrid>(spgrid_size, spgrid_size);
         } else {
@@ -84,13 +82,13 @@ class MPMGrid {
             // BOW_ASSERT(positions.size() <= (1u << index_bits));
             tbb::parallel_for(0, (int)positions.size(), [&](int i) {
                 BSplineWeights<T, dim> spline(positions[i], dx);
-                auto what = spline.base_node.data();
+                auto                   what = spline.base_node.data();
                 spdlog::info("spline.base_node.data() : {}, {}, {}", what[0], what[1], what[2]);
-                uint64_t biased_offset = SparseMask::Linear_Offset(1000,0,0);
+                uint64_t biased_offset = SparseMask::Linear_Offset(1000, 0, 0);
                 spdlog::info("biased_offset : {}", biased_offset);
                 spdlog::info("origin_offset : {}", origin_offset);
-                uint64_t offset        = SparseMask::Packed_Add(biased_offset, origin_offset);
-                particle_sorter[i]     = ((offset >> SparseMask::data_bits) << index_bits) + i;
+                uint64_t offset    = SparseMask::Packed_Add(biased_offset, origin_offset);
+                particle_sorter[i] = ((offset >> SparseMask::data_bits) << index_bits) + i;
             });
         }
         {
@@ -182,14 +180,15 @@ class MPMGrid {
 
 int main(int argc, char* argv[]) {
 
-    ParameterRoot::startup();
-    init_logging(argc, argv);
-    parse_arguments(argc, argv);
-    ZIRAN::MPMGrid<double, 3>       grid;
-    ZIRAN::Field<ZIRAN::Vector<double, 3>> positions;
-    positions.push_back(ZIRAN::Vector<double, 3>(1, 2, 3));
-    // void sortParticles(const Field<Vector<T, dim>>& positions, T dx)
-    grid.sortParticles(positions, 0.1);
+    hello(argc, argv);
+    // ParameterRoot::startup();
+    // init_logging(argc, argv);
+    // parse_arguments(argc, argv);
+    // ZIRAN::MPMGrid<double, 3>       grid;
+    // ZIRAN::Field<ZIRAN::Vector<double, 3>> positions;
+    // positions.push_back(ZIRAN::Vector<double, 3>(1, 2, 3));
+    // // void sortParticles(const Field<Vector<T, dim>>& positions, T dx)
+    // grid.sortParticles(positions, 0.1);
 
     // TmpSimulation<double, 3> sim;
 

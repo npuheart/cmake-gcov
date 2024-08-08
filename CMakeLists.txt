@@ -4,26 +4,34 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
+string(ASCII 27 ESC)
+set(COLOR_RESET "${ESC}[0m")
+set(COLOR_BLUE "${ESC}[34m")
+set(COLOR_RED "${ESC}[31m")
+set(COLOR_GREEN "${ESC}[32m")
+set(COLOR_YELLOW "${ESC}[33m")
+
 # Set the cmake options
 option(ENABLE_TESTS "Build the tests" OFF)
 option(ENABLE_COVERAGE "Generate coverage reports" OFF)
+option(BUILD_KOKKOS_LIB "Enable kokkos lib" ON)
 
 # Set the compiler options
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
-# set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake;${CMAKE_MODULE_PATH}")
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake;${CMAKE_MODULE_PATH}")
 set(CMAKE_CUDA_ARCHITECTURES 89)
 
 if (ENABLE_COVERAGE)
     set(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage") # 
 endif ()
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
 # print messages of settings
-message(STATUS ENABLE_COVERAGE=${ENABLE_COVERAGE})
-message(STATUS ENABLE_TESTS=${ENABLE_TESTS})
-
+message(STATUS "${COLOR_BLUE}ENABLE_COVERAGE=${ENABLE_COVERAGE}${COLOR_RESET}")
+message(STATUS "${COLOR_BLUE}ENABLE_TESTS=${ENABLE_TESTS}${COLOR_RESET}")
+message(STATUS "${COLOR_BLUE}BUILD_KOKKOS_LIB=${BUILD_KOKKOS_LIB}${COLOR_RESET}")
+message(STATUS "${COLOR_BLUE}CMAKE_CUDA_ARCHITECTURES=${CMAKE_CUDA_ARCHITECTURES}${COLOR_RESET}")
 #####################################################################
 ################# Set the project (项目开始) #########################
 #####################################################################
