@@ -33,33 +33,27 @@ std::vector<std::string> convert(T first, Args... rest) {
     return temp;
 }
 
-void fun(
+
+void fun_1(
     const std::string &filename,
+    const std::string &points,
+    const int& length,
+    const std::vector<std::string> &contents, 
     const std::vector<std::string> &tags, 
-    const std::vector<std::string> &contens, 
-    const std::vector<int> &value_sizes, 
-    const std::vector<std::string> &points)
+    const std::vector<int> &value_sizes
+    )
 {
-
-}
-
-template <typename... Args>
-void writevtu(std::vector<std::string> tags, Args... rest) {
-    ASSERT_INFO(sizeof...(Args) == tags.size(), "{} == {}", sizeof...(Args), tags.size());
-
-    const int          num  = sizeof...(Args);
-    auto               temp = convert(rest...);
+    const int num  = contents.size();
+    ASSERT(num == tags.size() && num == value_sizes.size());
     pugi::xml_document xml_node;
-    auto               vtkfile_node          = xml_node.append_child("VTKFile");
+    auto vtkfile_node = xml_node.append_child("VTKFile");
     vtkfile_node.append_attribute("type")    = "UnstructuredGrid";
     vtkfile_node.append_attribute("version") = "0.1";
     {
-
         auto u_node = vtkfile_node.append_child("UnstructuredGrid");
         {
             auto piece = u_node.append_child("Piece");
-
-            piece.append_attribute("NumberOfPoints") = "32"; // 节点数量
+            piece.append_attribute("NumberOfPoints") = std::to_string(length).c_str();
             piece.append_attribute("NumberOfCells")  = "0";
             {
                 auto node_1     = piece.append_child("Points");
@@ -68,7 +62,7 @@ void writevtu(std::vector<std::string> tags, Args... rest) {
                 data_array.append_attribute("type")               = "Float64";
                 data_array.append_attribute("NumberOfComponents") = "3";
                 data_array.append_attribute("format")             = "ascii";
-                data_array.append_child(pugi::node_pcdata).set_value(""); // TODO: 坐标
+                data_array.append_child(pugi::node_pcdata).set_value(points.c_str());
             }
             {
                 auto cells_node                        = piece.append_child("Cells");
@@ -90,18 +84,28 @@ void writevtu(std::vector<std::string> tags, Args... rest) {
             }
 
             auto point_data                        = piece.append_child("PointData");
-            point_data.append_attribute("Vectors") = tags[0].c_str();
+            // point_data.append_attribute("Vectors") = tags[0].c_str();
             for (size_t i = 0; i < num; i++) {
-                spdlog::info(" {}: {}", tags[i], temp[i]);
+                spdlog::info(" {}: {}", tags[i], contents[i]);
                 auto data_array = point_data.append_child("DataArray");
 
                 data_array.append_attribute("type")               = "Float64";
-                data_array.append_attribute("Name")               = "displacement";
-                data_array.append_attribute("NumberOfComponents") = "3";
+                data_array.append_attribute("Name")               = tags[i].c_str();
+                data_array.append_attribute("NumberOfComponents") = std::to_string(value_sizes[i]).c_str();
                 data_array.append_attribute("format")             = "ascii";
-                data_array.append_child(pugi::node_pcdata).set_value(temp[i].c_str());
+                data_array.append_child(pugi::node_pcdata).set_value(contents[i].c_str());
             }
         }
     }
-    xml_node.save_file("a.vtu");
+    xml_node.save_file(filename.c_str());
+}
+
+
+
+template <typename... Args>
+void writevtu(std::vector<std::string> tags, Args... contents_raw) {
+    ASSERT_INFO(sizeof...(Args) == tags.size(), "{} == {}", sizeof...(Args), tags.size());
+    auto               contents = convert(contents_raw...);
+    const int          num  = sizeof...(Args);
+    fun_1("test.vtu", "0 0 0 ", 1, contents, tags, {3, 3, 3});
 }
