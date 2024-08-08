@@ -7,34 +7,13 @@
 /// @brief main runner
 ///
 ///
-#include <common/log.h>
-#include <pugixml.hpp>
-
-template <typename T>
-std::string sum(T value) {
-    std::stringstream  sstream;
-    sstream << value;
-    return sstream.str();
-}
-
-template <typename T, typename... Args>
-std::string sum(T first, Args... rest) {
-    std::stringstream  sstream;
-    sstream << first << " " << sum(rest...) ;
-    return sstream.str();
-}
-
-//     // sstream << 0 << " " << dim.x - 1 << " " << 0 << " " << dim.y - 1 << " " << 0 << " " << dim.z - 1;
-//     std::string _1 = sstream.str();
-//     return (args + ...);
-
+#include<VtuIO.h>
 int main(int argc, char* argv[]) {
-    spdlog::info("sum: {}", sum(1, 2, 3, 4, 5));
-    pugi::xml_document xml_node;
-    pugi::xml_node     vtkfile_node = xml_node.append_child("VTKFile");
-    vtkfile_node.append_attribute("type") = "aa";
-    vtkfile_node.append_child(pugi::node_pcdata).set_value(sum(1, 2, 3, 4, 5).c_str());
-    xml_node.save_file("a.vtu");
 
+    std::vector<double>      v1{1, 2, 1};
+    std::vector<double>      v2{1, 2, 2};
+    std::vector<double>      v3{1, 2, 3};
+    std::vector<std::string> tags{"v1", "v2", "v3"};
+    writevtu(tags,v1,v2,v3);
     return 0;
 }
