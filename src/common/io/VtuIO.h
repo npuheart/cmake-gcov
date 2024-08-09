@@ -62,6 +62,7 @@ Vector<std::string> vectors_to_strings(const Vector<T>& first, const Args&... re
 }
 } // namespace
 
+namespace IO {
 template <template <typename> typename Vector>
 void write_particles_to_vtu(
     const int& length, 
@@ -117,7 +118,7 @@ void write_particles_to_vtu(
             // point_data.append_attribute("Vectors") = tags[0].c_str();
             for (size_t i = 0; i < num; i++) {
                 // points data
-                spdlog::info(" {}: {}", tags[i], contents[i]);
+                // spdlog::info(" {}: {}", tags[i], contents[i]);
                 auto data_array = point_data.append_child("DataArray");
 
                 data_array.append_attribute("type")               = "Float64";
@@ -140,12 +141,16 @@ void write_particles_to_vtu(
     const Args&... contents_raw) 
 {
     ASSERT_INFO(sizeof...(Args) == tags.size(), "{} == {}", sizeof...(Args), tags.size());
-    auto points   = vectors_to_strings(points_raw)[0];
-    auto contents = vectors_to_strings(contents_raw...);
-    std::vector<size_t> value_sizes = {value_size_of_vector<Args>::size...};
-    write_particles_to_vtu(points_raw.size(), points, filename, contents, tags, value_sizes);
+    if constexpr (sizeof...(Args)>0) {
+        auto points   = vectors_to_strings(points_raw)[0];
+        auto contents = vectors_to_strings(contents_raw...);
+        std::vector<size_t> value_sizes = {value_size_of_vector<Args>::size...};
+        write_particles_to_vtu(points_raw.size(), points, filename, contents, tags, value_sizes);
+    } else {
+        ASSERT_INFO(sizeof...(Args) > 0, "No data to write");
+    }
 }
-
+}
 
 // #include <VtuIO.h>
 // int main(int argc, char* argv[]) {
