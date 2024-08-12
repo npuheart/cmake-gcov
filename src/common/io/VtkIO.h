@@ -3,23 +3,23 @@
 /// @author Ma Pengfei (code@pengfeima.cn)
 /// @version 0.1
 /// @copyright Copyright (c) 2024 Ma Pengfei
-/// 
-/// @brief 
-/// 
+///
+/// @brief
+///
 ///
 
+#pragma once
 #include <fstream>
 #include <iostream>
+#include <spdlog/spdlog.h>
 #include <sstream>
 #include <string>
-#include <spdlog/spdlog.h>
 
-
+namespace IO {
 
 template <template <typename> class Vector, class Array>
-void writePositionVectorToVtk(const std::string& particleFile,
-    const Vector<Array>& points){
-    
+void writePositionVectorToVtk(const std::string& particleFile, const Vector<Array>& points) {
+
     // 打开文件以进行写入
     std::ofstream vtkFile(particleFile);
 
@@ -36,7 +36,7 @@ void writePositionVectorToVtk(const std::string& particleFile,
     vtkFile << "DATASET POLYDATA\n";
 
     // 写入点数和点数据
-    vtkFile << "POINTS "<<points.size()<<" float\n";
+    vtkFile << "POINTS " << points.size() << " float\n";
     for (const auto& point : points) {
         vtkFile << point[0] << " " << point[1] << " " << point[2] << "\n";
     }
@@ -46,7 +46,7 @@ void writePositionVectorToVtk(const std::string& particleFile,
     spdlog::info("VTK file {} created successfully.", particleFile);
 }
 
-
+} // namespace IO
 
 // int main() {
 //     ZIRAN::DataDir output_dir{};
