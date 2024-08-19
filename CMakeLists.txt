@@ -15,6 +15,7 @@ set(COLOR_YELLOW "${ESC}[33m")
 option(ENABLE_TESTS "Build the tests" OFF)
 option(ENABLE_COVERAGE "Generate coverage reports" OFF)
 option(BUILD_KOKKOS_LIB "Enable kokkos lib" ON)
+option(ENABLE_SANITIZER "Enable sanitizer to detect illegal I/O on memory" ON)
 
 # Set the compiler options
 set(CMAKE_CXX_STANDARD 20)
@@ -24,7 +25,12 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake;${CMAKE_MODULE_PATH}")
 set(CMAKE_CUDA_ARCHITECTURES 89)
 
 if (ENABLE_COVERAGE)
-    set(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage") # 
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage") # 
+endif ()
+
+if (ENABLE_SANITIZER)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -g")
+    # message(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 endif ()
 
 # print messages of settings
