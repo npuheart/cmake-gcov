@@ -11,6 +11,6 @@
 
 int main() {
     { Timer timer("aaa"); }
-    TimeLogManager::logger().print_timing();
+    TimeLogger::instance().print_timing();
     return 0;
 }

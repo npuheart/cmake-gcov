@@ -11,6 +11,7 @@
 
 #pragma once
 #include <chrono>
+#include <MnBase/Singleton.h>
 #include <common/log.h>
 // #include <config.h>
 // #include <fstream>
@@ -24,14 +25,9 @@
 // #include <string_view>
 // #include <vector>
 
-// #include <nlohmann/json.hpp>
-namespace __timer_h__ { // avoid external use
-class TimeLogger {
-  public:
-    TimeLogger()                             = default;
-    TimeLogger(const TimeLogger&)            = delete;
-    TimeLogger& operator=(const TimeLogger&) = delete;
-    ~TimeLogger()                            = default;
+
+struct TimeLogger
+	: mn::Singleton<TimeLogger>{
 
     void register_timing(const std::string& task, size_t duration) {
         Record record{task, duration};
@@ -53,15 +49,6 @@ class TimeLogger {
   private:
     inline thread_local static std::vector<Record> records;
 };
-} // namespace __timer_h__
-
-class TimeLogManager {
-  public:
-    static __timer_h__::TimeLogger& logger() {
-        static __timer_h__::TimeLogger lg{};
-        return lg;
-    }
-};
 
 class Timer {
   public:
@@ -71,11 +58,11 @@ class Timer {
         end         = ClockType::now();
         auto   diff = end - beg;
         size_t us   = std::chrono::duration_cast<std::chrono::microseconds>(diff).count();
-        TimeLogManager::logger().register_timing(_task, us);
+        TimeLogger::instance().register_timing(_task, us);
     }
 
     using ClockType = std::chrono::high_resolution_clock;
-    using Record    = __timer_h__::TimeLogger::Record;
+    using Record    = TimeLogger::Record;
 
   private:
     const std::string     _task;
