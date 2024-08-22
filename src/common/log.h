@@ -31,7 +31,6 @@
 
 #define NOT_IMPLEMENTED LOG_ERROR("{} not implemented.", std::string(__func__))
 
-// BOW_TIMER_FLAG("Elasticity");
 
 void init_logging(int argc, char* argv[]) {
 

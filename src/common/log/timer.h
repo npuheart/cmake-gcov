@@ -70,15 +70,7 @@ class Timer {
     ClockType::time_point end;
 };
 
-// using json = nlohmann::json;
-
-// class ScopeProfiler {
-
-//   private:
-
-//     inline ScopeProfiler(const char* tag, ClockType::time_point beg);
-//     inline void onDestroy(ClockType::time_point end);
-
+#define FUNCTION_TIMER Timer timer(__PRETTY_FUNCTION__)
 //   public:
 //     ScopeProfiler(const char* tag_) : ScopeProfiler(tag_, ClockType::now()) {}
 //     ~ScopeProfiler() { onDestroy(ClockType::now()); }

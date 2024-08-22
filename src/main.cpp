@@ -11,6 +11,10 @@
 
 int main() {
     { Timer timer("aaa"); }
+    { Timer timer(__PRETTY_FUNCTION__); }
+    
+    {FUNCTION_TIMER;}
+
     TimeLogger::instance().print_timing();
     return 0;
 }
