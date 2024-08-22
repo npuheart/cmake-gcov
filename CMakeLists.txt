@@ -12,10 +12,11 @@ set(COLOR_GREEN "${ESC}[32m")
 set(COLOR_YELLOW "${ESC}[33m")
 
 # Set the cmake options
-option(ENABLE_TESTS "Build the tests" OFF)
+# NOTE : ENABLE_SANITIZER 和 USE_CUDA 不能同时启用
+option(ENABLE_TESTS "Build the tests" ON)
 option(ENABLE_COVERAGE "Generate coverage reports" OFF)
 option(BUILD_KOKKOS_LIB "Enable kokkos lib" ON)
-option(ENABLE_SANITIZER "Enable sanitizer to detect illegal I/O on memory" ON)
+option(ENABLE_SANITIZER "Enable sanitizer to detect illegal I/O on memory" OFF)
 
 # Set the compiler options
 set(CMAKE_CXX_STANDARD 20)

@@ -35,15 +35,15 @@ genhtml coverage.info --output-directory result
 
 ```bash
 # 编译所有可执行文件
-make 
+cd build && cmake .. -DENABLE_SANITIZER=OFF -DENABLE_TESTS=OFF -DBUILD_KOKKOS_LIB=ON
 # 编译主程序
 make npuheart_main
 ./npuheart_main
 ```
 
 ```bash
-# 运行测试程序
-cd build && cmake ..
+# 运行测试程序(运行 CUDA 程序时不能使用 sanitizer)。
+cd build && cmake .. -DENABLE_SANITIZER=OFF -DENABLE_TESTS=ON -DBUILD_KOKKOS_LIB=ON
 make npuheart_tests
 make test
 cd ..
@@ -55,9 +55,11 @@ genhtml coverage.info --output-directory result
 ## Credits
 - From the [Blog](https://github.com/jhbell/cmake-gcov) of Jeffrey H. Bell and his [GitHub Repository](https://jhbell.com/using-cmake-and-gcov).
 - From [coverage.yml](https://github.com/ipc-sim/ipc-toolkit/blob/main/.github/workflows/coverage.yml).
-
+- From [fanfu-lab](https://github.com/penn-graphics-research) for MPM code.
+- From [dolfinx](https://github.com/FEniCS/dolfinx).
+- From [Spack](https://github.com/spack/spack) for env.
 
 ## Environment
-CUDA 12.5.82
-GCC  13.2.0
-
+UBUNTU 20.04
+CUDA   12.5.82
+GCC    13.2.0
