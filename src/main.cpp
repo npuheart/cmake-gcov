@@ -9,8 +9,14 @@
 ///
 #include <common/log/timer.h>
 #include <thread>
+int main_poisson(int argc, char* argv[]);
 
-int main() {
+int main(int argc, char* argv[]) {
+    {
+        main_poisson(argc, argv);
+        Timer timer("main_poisson");
+    }
+
     {
         Timer timer("aaa");
         std::this_thread::sleep_for(std::chrono::microseconds(100));

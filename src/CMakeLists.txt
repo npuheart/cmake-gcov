@@ -5,14 +5,18 @@ add_subdirectory(Depends)
 add_subdirectory(Mn)
 add_subdirectory(SPGrid)
 add_subdirectory(libkokkos)
+add_subdirectory(poisson)
 
 # Create the library (创建库)
 add_library(${PROJECT_NAME}_dev OBJECT Adder.cpp)
 target_include_directories(${PROJECT_NAME}_dev PUBLIC ".")
 
 # 链接子项目
-target_link_libraries(${PROJECT_NAME}_dev PUBLIC Apple mncuda spgrid)
-target_link_libraries(${PROJECT_NAME}_dev PUBLIC tbb partio pugixml Tick)
+target_link_libraries(${PROJECT_NAME}_dev PUBLIC Apple mncuda spgrid demo_poisson)
+target_link_libraries(${PROJECT_NAME}_dev PUBLIC tbb partio Tick)
+
+find_package(pugixml REQUIRED)
+target_link_libraries(${PROJECT_NAME}_dev PUBLIC pugixml)
 
 find_package(spdlog REQUIRED)
 target_link_libraries(${PROJECT_NAME}_dev PUBLIC spdlog::spdlog)
@@ -28,6 +32,8 @@ target_link_libraries(${PROJECT_NAME}_dev PUBLIC ${MPI_CXX_LIBRARIES})
 
 find_package(nlohmann_json REQUIRED)
 target_link_libraries(${PROJECT_NAME}_dev PUBLIC  nlohmann_json::nlohmann_json)
+
+
 
 # NOTE: 含有kokkos的代码需要独立编译，然后最为库导入
 set(KOKKOS_LIB_NAME kokkos_lib)

@@ -20,7 +20,7 @@ option(ENABLE_SANITIZER "Enable sanitizer to detect illegal I/O on memory" ON)
 # Set the compiler options
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake;${CMAKE_MODULE_PATH}")
 set(CMAKE_CUDA_ARCHITECTURES 89)
 
@@ -41,7 +41,7 @@ message(STATUS "${COLOR_BLUE}CMAKE_CUDA_ARCHITECTURES=${CMAKE_CUDA_ARCHITECTURES
 #####################################################################
 ################# Set the project (项目开始) #########################
 #####################################################################
-project(npuheart CXX CUDA)
+project(npuheart C CXX CUDA)
 
 # 主要源码
 add_subdirectory(src)  
