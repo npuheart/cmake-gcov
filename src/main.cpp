@@ -8,13 +8,25 @@
 ///
 ///
 #include <common/log/timer.h>
+#include <thread>
 
 int main() {
-    { Timer timer("aaa"); }
-    { Timer timer(__PRETTY_FUNCTION__); }
-    
-    {FUNCTION_TIMER;}
+    {
+        Timer timer("aaa");
+        std::this_thread::sleep_for(std::chrono::microseconds(100));
+    }
+    {
+        Timer timer(__PRETTY_FUNCTION__);
+        std::this_thread::sleep_for(std::chrono::microseconds(100));
+    }
+
+    {
+        FUNCTION_TIMER;
+        Timer timer_1("bbb");
+        std::this_thread::sleep_for(std::chrono::microseconds(200));
+    }
 
     TimeLogger::instance().print_timing();
+    TimeLogger::instance().print_statistics();
     return 0;
 }

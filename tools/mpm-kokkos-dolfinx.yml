@@ -1,3 +1,5 @@
+
+
 # This is a Spack Environment file.
 #
 # It describes a set of packages to be installed, along with
@@ -12,10 +14,11 @@ spack:
   - openmpi
   - cuda@12.5.1
   - nlohmann-json
+  - fenics-dolfinx@main+adios2
+  - py-fenics-ffcx@main
   - cxxopts
   view: true
   concretizer:
     unify: true
-    reuses: false
 
 
