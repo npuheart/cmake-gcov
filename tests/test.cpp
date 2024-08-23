@@ -12,8 +12,15 @@
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("minial CUDA function", "[cuda_common_1]") { REQUIRE(main_cuda() == 0); }
-
 TEST_CASE("minial MPI function", "[mpi_common_1]") { REQUIRE(mpi_main() == 0); }
+TEST_CASE("Input and output", "[vtk_common_1]") { REQUIRE(main_vtk() == 0); }
+TEST_CASE("Input and output", "[vtu_common_1]") { REQUIRE(main_vtu() == 0); }
+TEST_CASE("Input and output", "[vtu_common_2]") { REQUIRE(main_vtu_2() == 0); }
+TEST_CASE("Input and output", "[pvd_common_1]") { REQUIRE(main_pvd() == 0); }
+TEST_CASE("Timer", "[timmer_1]") {
+    TimeLogger::instance().print_timing();
+    TimeLogger::instance().print_statistics();
+}
 
 // 测试模板数组
 // using namespace mn;

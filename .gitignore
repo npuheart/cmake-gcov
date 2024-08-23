@@ -12,3 +12,5 @@ src/TMP
 *.vtk
 *.json
 .vscode
+data/candy.vtu
+data/output/aaa.pvd

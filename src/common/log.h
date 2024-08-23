@@ -31,7 +31,7 @@
 
 #define NOT_IMPLEMENTED LOG_ERROR("{} not implemented.", std::string(__func__))
 
-
+namespace {
 void init_logging(int argc, char* argv[]) {
 
     spdlog::set_level(spdlog::level::info);
@@ -52,3 +52,4 @@ void init_logging(int argc, char* argv[]) {
     // spdlog::critical(
     //     "Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
 }
+} // namespace
