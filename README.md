@@ -52,6 +52,14 @@ lcov --remove coverage.info '*catch2*' --output-file coverage.info
 genhtml coverage.info --output-directory result
 ```
 
+## 测试
+``` bash
+cd build && cmake .. -DENABLE_SANITIZER=OFF -DENABLE_TESTS=ON -DBUILD_KOKKOS_LIB=ON
+make npuheart_tests -j32
+make test
+mpirun -np 3 ./tests/npuheart_tests
+```
+
 ## Credits
 - From the [Blog](https://github.com/jhbell/cmake-gcov) of Jeffrey H. Bell and his [GitHub Repository](https://jhbell.com/using-cmake-and-gcov).
 - From [coverage.yml](https://github.com/ipc-sim/ipc-toolkit/blob/main/.github/workflows/coverage.yml).
