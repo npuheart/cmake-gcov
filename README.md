@@ -42,7 +42,7 @@ make npuheart_main
 ```
 
 ```bash
-# 运行测试程序(运行 CUDA 程序时不能使用 sanitizer)。
+# 运行测试程序(运行 CUDA 程序时不能使用 sanitizer, openmpi 无法通过内存泄漏检测)。
 cd build && cmake .. -DENABLE_SANITIZER=OFF -DENABLE_TESTS=ON -DBUILD_KOKKOS_LIB=ON
 make npuheart_tests
 make test

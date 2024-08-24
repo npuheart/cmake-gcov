@@ -31,6 +31,7 @@ endif ()
 
 if (ENABLE_SANITIZER)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -g")
+    add_definitions(-DENABLE_SANITIZER)
     # message(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 endif ()
 

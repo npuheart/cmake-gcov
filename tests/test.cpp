@@ -11,7 +11,9 @@
 #include "common/common.h"
 #include <catch2/catch_test_macros.hpp>
 
+#ifndef ENABLE_SANITIZER
 TEST_CASE("minial CUDA function", "[cuda_common_1]") { REQUIRE(main_cuda() == 0); }
+#endif
 TEST_CASE("minial MPI function", "[mpi_common_1]") { REQUIRE(mpi_main() == 0); }
 TEST_CASE("Input and output", "[vtk_common_1]") { REQUIRE(main_vtk() == 0); }
 TEST_CASE("Input and output", "[vtu_common_1]") { REQUIRE(main_vtu() == 0); }
