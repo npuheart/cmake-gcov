@@ -29,6 +29,7 @@ add_custom_command(
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_library(demo_poisson main.cpp ${CMAKE_CURRENT_BINARY_DIR}/poisson.c)
 target_link_libraries(demo_poisson PUBLIC dolfinx)
+target_include_directories(demo_poisson PUBLIC ${CMAKE_SOURCE_DIR}/src)
 
 # Do not throw error for 'multi-line comments' (these are typical in rst which
 # includes LaTeX)
