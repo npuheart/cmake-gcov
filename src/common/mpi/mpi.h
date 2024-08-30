@@ -28,23 +28,23 @@ inline void check_mpi(Petsc_Status status, int argc, char** argv) {
     (void)argc;
     (void)argv;
     if (status == Petsc_Status::INITIALIZED) {
-        int flag;
-        MPI_Initialized(&flag);
-
-        if (!flag) {
+        PetscBool isInitialized;
+        PetscInitialized(&isInitialized);
+        if (!isInitialized) {
             spdlog::info("MPI is not initialized. Initializing MPI now.");
-            MPI_Init(&argc, &argv);
+            PetscInitialize(&argc, &argv, nullptr, nullptr);
         } else {
             spdlog::info("MPI is already initialized.");
         }
     }
 
     if (status == Petsc_Status::FINALIZED) {
-        int finalized;
-        MPI_Finalized(&finalized);
-        if (!finalized) {
+                
+        PetscBool isFinalized;
+        PetscFinalized(&isFinalized);
+        if (!isFinalized) {
             spdlog::info("MPI is not finalized. Finalizing MPI now.");
-            MPI_Finalize();
+            PetscFinalize();
         } else {
             spdlog::info("MPI is already finalized.");
         }
